@@ -1,4 +1,5 @@
-package KMRiiwaSunriseTestApplication.src;
+package API_ROS2_Sunrise;
+
 
 // RoboticsAPI
 import com.kuka.jogging.provider.api.common.ICartesianJoggingSupport;
@@ -20,6 +21,8 @@ public class KMPjogger
   private ICartesianJoggingSupport _joggableDevice;
   
   private double[] _velocities;
+  
+
   
   public KMPjogger( ICartesianJoggingSupport joggableDevice, long updateperiod) {
 	this._velocities = new double[3];
@@ -91,5 +94,12 @@ public class KMPjogger
   public void updateVelocities(double[] vel) {
 	  this._velocities = vel;
 
-  } 
+  }
+
+
+  
+
+	  
+  
+  
 }
