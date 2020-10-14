@@ -15,7 +15,7 @@
 // limitations under the License.
 
 
-package API_ROS2_Sunrise;
+package kmr.test2;
 
 // Configuration
 import javax.inject.Inject;
@@ -23,13 +23,7 @@ import javax.inject.Named;
 import org.apache.log4j.BasicConfigurator;
 
 // Implementated classes
-import API_ROS2_Sunrise.KMP_commander;
-import API_ROS2_Sunrise.KMP_sensor_reader;
-import API_ROS2_Sunrise.KMP_status_reader;
-import API_ROS2_Sunrise.LBR_commander;
-import API_ROS2_Sunrise.LBR_sensor_reader;
-import API_ROS2_Sunrise.LBR_status_reader;
-import API_ROS2_Sunrise.SafetyStateListener;
+import kmr.test2.KMP_commander;
 
 //RoboticsAPI
 import com.kuka.roboticsAPI.annotations.*;
@@ -72,7 +66,7 @@ public class KMP_app extends RoboticsAPIApplication{
 		resumeFunction = getTaskFunction(IAutomaticResumeFunction.class);
 
 		// Configure robot;
-		controller = getController("KUKA_Sunrise_Cabinet_1");
+		//controller = getController("KUKA_Sunrise_Cabinet_1");
 		kmp = getContext().getDeviceFromType(KmpOmniMove.class);		
 
 

@@ -14,10 +14,10 @@
 // limitations under the License.
 
 
-package API_ROS2_Sunrise;
+package kmr.test2;
 
 
-import API_ROS2_Sunrise.KMPjogger;
+import kmr.test2.KMPjogger;
 
 import com.kuka.jogging.provider.api.common.ICartesianJoggingSupport;
 import com.kuka.roboticsAPI.deviceModel.kmp.KmpOmniMove;
@@ -25,7 +25,7 @@ import com.kuka.roboticsAPI.executionModel.ICommandContainer;
 import com.kuka.roboticsAPI.motionModel.kmp.MobilePlatformRelativeMotion;
 
 
-public class KMP_commander extends Node{
+public class KMP_commander{
 
 	// Robot
 	KmpOmniMove kmp;
@@ -34,7 +34,7 @@ public class KMP_commander extends Node{
 	ICommandContainer KMP_currentMotion;
 	double[] velocities = {0.0,0.0,0.0};
 	KMPjogger kmp_jogger;
-	long jogging_period  = 1L;
+	long jogging_period  = 20L;
 
 	public KMP_commander(KmpOmniMove robot) {
 		this.kmp = robot;
@@ -44,13 +44,12 @@ public class KMP_commander extends Node{
 	public void run() {
         
         this.kmp_jogger.startJoggingExecution();
-
+        setNewVelocity("lmao 0.05 0 0.1");
 		while(true)
 		{
-			setNewVelocity("lmao 0 0 1");
-
+			continue;
         }
-        System.out.println("KMPcommander no longer running");
+       
     }
 	
 
