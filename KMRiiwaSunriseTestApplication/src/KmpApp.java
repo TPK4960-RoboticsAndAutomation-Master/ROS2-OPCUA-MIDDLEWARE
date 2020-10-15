@@ -38,7 +38,7 @@ import com.kuka.generated.ioAccess.ControlPanelIOGroup;
 
 // AUT MODE: 3s, T1/T2/CRR: 2s
 @ResumeAfterPauseEvent(delay = 0 ,  afterRepositioning = true)
-public class KmpApp extends RoboticsAPIApplication{
+public class KmpApp extends RoboticsAPIApplication {
 	
 	// Runtime Variables
 	private volatile boolean AppRunning;
@@ -99,9 +99,21 @@ public class KmpApp extends RoboticsAPIApplication{
 		setAutomaticallyResumable(true);
 
 		System.out.println("Running app!");
+
+		kmp_commander.setPriority(Thread.MAX_PRIORITY);
 		
 		// Start all connected nodes
-		kmp_commander.run();
+		//kmp_commander.run();
+		if(!(kmp_commander == null)){
+			if(kmp_commander.isSocketConnected()) {
+				kmp_commander.start();
+			}
+		}
+		while(AppRunning) {    
+			AppRunning = (!(kmp_commander.getShutdown()));
+		}
+		System.out.println("Shutdown message received in main application");
+		shutdown_application();
 	}
 
 	public void shutdown_application(){
@@ -130,7 +142,7 @@ public class KmpApp extends RoboticsAPIApplication{
 
 	
 	public static void main(String[] args){
-		KMP_app app = new KMP_app();
+		KmpApp app = new KmpApp();
 		app.runApplication();
 	}
 	

@@ -36,16 +36,17 @@ public class KmpCommander extends Node {
 	KMPjogger kmp_jogger;
 	long jogging_period  = 20L;
 
+	/*
 	public KMP_commander(KmpOmniMove robot) {
 		this.kmp = robot;
 		this.kmp_jogger = new KMPjogger((ICartesianJoggingSupport)kmp, jogging_period);
 	}
+	*/
 
-	public KMP_commander(int port, KmpOmniMove robot, String ConnectionType) {
+	public KMP_commander(int port, KmpOmniMove robot, String ConnectionType ){
 		super(port, ConnectionType, "KMP commander");
 		this.kmp = robot;
 		this.kmp_jogger = new KMPjogger((ICartesianJoggingSupport)kmp, jogging_period);
-		
 		
 		if (!(isSocketConnected())) {
 			Thread monitorKMPCommandConnections = new MonitorKMPCommandConnectionsThread();
@@ -70,7 +71,8 @@ public class KmpCommander extends Node {
 				}
 		
 		    	if ((splt[0]).equals("setTwist") && !getEmergencyStop()) {
-					setNewVelocity(Commandstr);
+					//setNewVelocity(Commandstr);
+					System.out.println(Commandstr + "\n");
 				}
 	    	}
 		}
@@ -85,7 +87,6 @@ public class KmpCommander extends Node {
 			continue;
 		}
 		*/
-       
 	}
 	
 	public class MonitorEmergencyStopThread extends Thread {
@@ -132,7 +133,7 @@ public class KmpCommander extends Node {
 		}
 	}
 	
-
+	/*
 	public void setNewVelocity(String vel){
 		String []lineSplt = vel.split(" ");
 
@@ -145,6 +146,7 @@ public class KmpCommander extends Node {
         }
         
 	}
+	*/
 	
 	/**
 	 * Override the Thread.close() function to kill jogger and close socket.

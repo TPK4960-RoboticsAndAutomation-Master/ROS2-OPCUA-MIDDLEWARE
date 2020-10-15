@@ -53,7 +53,7 @@ public class TcpSocket implements ISocket {
 			isConnected=true;
 			return TCPConn;
 		} catch(Exception e) {
-			System.out.println("Error creating I/O ports for TCP communication for  "  this.nodename + " on port: "+ this.COMport + " Error: " +e);
+			System.out.println("Error creating I/O ports for TCP communication for  " + this.nodename + " on port: "+ this.COMport + " Error: " +e);
 			return null;
 		}
     }
