@@ -26,6 +26,8 @@ public abstract class Node extends Thread{
 	private volatile static boolean PathFinished;
 	protected volatile static boolean isKMPmoving;
 	private volatile static boolean isKMPconnected;
+	private volatile static boolean isLBRconnected;
+	private volatile static boolean isLBRmoving;
 
 	// Socket
 	protected ISocket socket;
@@ -108,6 +110,23 @@ public abstract class Node extends Thread{
 	
 	public void setisKMPConnected(boolean in) {
         isKMPconnected = in;
+	}
+
+	public boolean getisLBRMoving() {
+		return isLBRmoving;
+	}
+	
+	public void setisLBRMoving(boolean in) {
+		isLBRmoving = in;
+	}
+	
+	
+	public boolean getisLBRConnected() {
+		return isLBRconnected;
+	}
+	
+	public void setisLBRConnected(boolean in) {
+		isLBRconnected = in;
 	}
     
     public abstract void run();

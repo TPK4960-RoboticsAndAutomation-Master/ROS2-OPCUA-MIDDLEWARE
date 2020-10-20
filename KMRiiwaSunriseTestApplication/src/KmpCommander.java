@@ -61,6 +61,7 @@ public class KmpCommander extends Node {
 		emergencyStopThread.start();
 		
 		while(isNodeRunning()) {
+			/*
 			String Commandstr = this.socket.receive_message(); 
 	    	String []splt = Commandstr.split(" ");
 	    	if(!getShutdown() && !closed) {
@@ -74,7 +75,9 @@ public class KmpCommander extends Node {
 					//setNewVelocity(Commandstr);
 					System.out.println(Commandstr + "\n");
 				}
-	    	}
+			}
+			*/
+			continue;
 		}
 		
 		System.out.println("KMPcommander no longer running");

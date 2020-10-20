@@ -24,6 +24,7 @@ import org.apache.log4j.BasicConfigurator;
 
 // Implementated classes
 import kmr.test2.KmpCommander;
+import kmr.test2.LbrCommander;
 
 //RoboticsAPI
 import com.kuka.roboticsAPI.annotations.*;
@@ -50,8 +51,14 @@ public class KmpApp extends RoboticsAPIApplication {
 	public KmpOmniMove kmp;
 	public Controller controller;
 
+	// Declare LBR
+	@Inject
+	@Named("LBR_iiwa_14_R820_1")
+	public LBR lbr;
+
 	// Implemented node classes
 	KmpCommander kmp_commander;
+	LbrCommander lbr_commander;
 	
 	// Check if application is paused:
 	@Inject
@@ -62,6 +69,7 @@ public class KmpApp extends RoboticsAPIApplication {
 
 	// Ports
 	int kmp_commander_port = 30002;
+	int lbr_commander_port = 30005;
 
 
 	public void initialize() {
@@ -73,11 +81,13 @@ public class KmpApp extends RoboticsAPIApplication {
 
 		// Configure robot;
 		//controller = getController("KUKA_Sunrise_Cabinet_1");
-		kmp = getContext().getDeviceFromType(KmpOmniMove.class);		
+		kmp = getContext().getDeviceFromType(KmpOmniMove.class);
+		lbr = getContext().getDeviceFromType(LBR.class);	
 		
 		// Create nodes for communication
 		// kmp_commander = new KMP_commander(kmp);
 		kmp_commander = new KmpCommander(kmp_commander_port, kmp, connection);
+		lbr_commander = new LBR_commander(lbr_commander_port, lbr, connection, getApplicationData().getFrame("/DrivePos"));
 
 		// Check if a commander node is active
 		long startTime = System.currentTimeMillis();
@@ -101,16 +111,29 @@ public class KmpApp extends RoboticsAPIApplication {
 		System.out.println("Running app!");
 
 		kmp_commander.setPriority(Thread.MAX_PRIORITY);
-		
+		lbr_commander.setPriority(Thread.MAX_PRIORITY);
+
 		// Start all connected nodes
-		//kmp_commander.run();
+		kmp_commander.run();
+		lbr_commander.run();
+
+		//setLBRmotion 2 0.5
+
 		if(!(kmp_commander == null)){
 			if(kmp_commander.isSocketConnected()) {
 				kmp_commander.start();
 			}
 		}
+
+		if(!(lbr_commander == null)){
+			if(lbr_commander.isSocketConnected()) {
+				lbr_commander.start();
+			}
+		}
+
+
 		while(AppRunning) {    
-			AppRunning = (!(kmp_commander.getShutdown()));
+			AppRunning = (!(kmp_commander.getShutdown() || lbr_commander.getShutdown()));
 		}
 		System.out.println("Shutdown message received in main application");
 		shutdown_application();
@@ -120,6 +143,7 @@ public class KmpApp extends RoboticsAPIApplication {
 		System.out.println("----- Shutting down Application -----");
 
 		kmp_commander.close();
+		lbr_commander.close();
 	
     	System.out.println("Application terminated");
     	    	
