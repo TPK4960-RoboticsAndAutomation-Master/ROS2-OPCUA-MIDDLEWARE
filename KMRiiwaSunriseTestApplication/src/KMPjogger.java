@@ -12,7 +12,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
-public class KMPjogger
+public class KmpJogger
 {
   private long JOG_UPDATE_PERIOD = 50L;
 

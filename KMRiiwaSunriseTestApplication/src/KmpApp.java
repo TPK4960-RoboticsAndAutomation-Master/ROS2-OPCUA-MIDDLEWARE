@@ -23,7 +23,7 @@ import javax.inject.Named;
 import org.apache.log4j.BasicConfigurator;
 
 // Implementated classes
-import kmr.test2.KMP_commander;
+import kmr.test2.KmpCommander;
 
 //RoboticsAPI
 import com.kuka.roboticsAPI.annotations.*;
@@ -38,7 +38,7 @@ import com.kuka.generated.ioAccess.ControlPanelIOGroup;
 
 // AUT MODE: 3s, T1/T2/CRR: 2s
 @ResumeAfterPauseEvent(delay = 0 ,  afterRepositioning = true)
-public class KMP_app extends RoboticsAPIApplication{
+public class KmpApp extends RoboticsAPIApplication {
 	
 	// Runtime Variables
 	private volatile boolean AppRunning;
@@ -51,11 +51,17 @@ public class KMP_app extends RoboticsAPIApplication{
 	public Controller controller;
 
 	// Implemented node classes
-	KMP_commander kmp_commander;
+	KmpCommander kmp_commander;
 	
 	// Check if application is paused:
 	@Inject
 	ControlPanelIOGroup ControlPanelIO;
+
+	// Connection types
+	String connection = "TCP";
+
+	// Ports
+	int kmp_commander_port = 30002;
 
 
 	public void initialize() {
@@ -68,22 +74,60 @@ public class KMP_app extends RoboticsAPIApplication{
 		// Configure robot;
 		//controller = getController("KUKA_Sunrise_Cabinet_1");
 		kmp = getContext().getDeviceFromType(KmpOmniMove.class);		
-
-
-
+		
 		// Create nodes for communication
-		kmp_commander = new KMP_commander(kmp);
+		// kmp_commander = new KMP_commander(kmp);
+		kmp_commander = new KmpCommander(kmp_commander_port, kmp, connection);
 
+		// Check if a commander node is active
+		long startTime = System.currentTimeMillis();
+		int shutDownAfterMs = 10000; 
+		while(!AppRunning) {
+			if(kmp_commander.isSocketConnected()) {
+				AppRunning = true;
+				System.out.println("Application ready to run!");	
+				break;
+			} else if((System.currentTimeMillis() - startTime) > shutDownAfterMs) {
+				System.out.println("Could not connect to a command node after " + shutDownAfterMs/1000 + "s. Shutting down.");	
+				shutdown_application();
+				break;
+			}				
+		}
 	}
-	
 	
 	public void run() {
 		setAutomaticallyResumable(true);
 
 		System.out.println("Running app!");
+
+		kmp_commander.setPriority(Thread.MAX_PRIORITY);
 		
 		// Start all connected nodes
-		kmp_commander.run();
+		//kmp_commander.run();
+		if(!(kmp_commander == null)){
+			if(kmp_commander.isSocketConnected()) {
+				kmp_commander.start();
+			}
+		}
+		while(AppRunning) {    
+			AppRunning = (!(kmp_commander.getShutdown()));
+		}
+		System.out.println("Shutdown message received in main application");
+		shutdown_application();
+	}
+
+	public void shutdown_application(){
+		System.out.println("----- Shutting down Application -----");
+
+		kmp_commander.close();
+	
+    	System.out.println("Application terminated");
+    	    	
+    	try {
+    		dispose();
+    	} catch(Exception e) {
+    		System.out.println("Application could not be terminated cleanly: " + e);
+    	}
 	}
 	
 	private void setAutomaticallyResumable(boolean enable)
@@ -98,7 +142,7 @@ public class KMP_app extends RoboticsAPIApplication{
 
 	
 	public static void main(String[] args){
-		KMP_app app = new KMP_app();
+		KmpApp app = new KmpApp();
 		app.runApplication();
 	}
 	
