@@ -7,8 +7,8 @@ from rclpy.qos import qos_profile_sensor_data
 from rclpy.utilities import remove_ros_args
 import argparse
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
-from kmr_msgs.msg import LbrStatusdata
-from kmr_msgs.action import MoveManipulator
+from python import LbrStatusdata
+from python import MoveManipulator
 from tcpSocket import TCPSocket
 from rclpy.action import ActionServer, GoalResponse
 from rclpy.callback_groups import ReentrantCallbackGroup

@@ -1,0 +1,13 @@
+package.xml
+setup.cfg
+setup.py
+kmr_communication/__init__.py
+kmr_communication/lbr_commander_node.py
+kmr_communication.egg-info/PKG-INFO
+kmr_communication.egg-info/SOURCES.txt
+kmr_communication.egg-info/dependency_links.txt
+kmr_communication.egg-info/entry_points.txt
+kmr_communication.egg-info/requires.txt
+kmr_communication.egg-info/top_level.txt
+kmr_communication.egg-info/zip-safe
+resource/kmr_communication

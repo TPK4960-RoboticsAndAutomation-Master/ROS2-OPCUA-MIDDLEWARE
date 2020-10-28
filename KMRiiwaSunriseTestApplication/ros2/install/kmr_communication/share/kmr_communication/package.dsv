@@ -1,0 +1,9 @@
+source;share/kmr_communication/hook/pythonpath.ps1
+source;share/kmr_communication/hook/pythonpath.dsv
+source;share/kmr_communication/hook/pythonpath.sh
+source;share/kmr_communication/hook/ament_prefix_path.ps1
+source;share/kmr_communication/hook/ament_prefix_path.dsv
+source;share/kmr_communication/hook/ament_prefix_path.sh
+source;../../build/kmr_communication/share/kmr_communication/hook/pythonpath_develop.ps1
+source;../../build/kmr_communication/share/kmr_communication/hook/pythonpath_develop.dsv
+source;../../build/kmr_communication/share/kmr_communication/hook/pythonpath_develop.sh

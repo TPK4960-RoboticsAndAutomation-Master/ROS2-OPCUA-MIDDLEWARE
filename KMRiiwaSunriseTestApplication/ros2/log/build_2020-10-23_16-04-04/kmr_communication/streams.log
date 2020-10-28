@@ -1,0 +1,25 @@
+[0.345s] Invoking command in '/home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/build/kmr_communication': PYTHONPATH=/home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/install/kmr_communication/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --prefix /home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/install/kmr_communication --editable --build-directory /home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/build/kmr_communication/build --no-deps install_data --install-dir /home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/install/kmr_communication
+[0.645s] running develop
+[0.803s] running egg_info
+[0.805s] creating kmr_communication.egg-info
+[0.805s] writing kmr_communication.egg-info/PKG-INFO
+[0.805s] writing dependency_links to kmr_communication.egg-info/dependency_links.txt
+[0.807s] writing entry points to kmr_communication.egg-info/entry_points.txt
+[0.807s] writing requirements to kmr_communication.egg-info/requires.txt
+[0.808s] writing top-level names to kmr_communication.egg-info/top_level.txt
+[0.814s] writing manifest file 'kmr_communication.egg-info/SOURCES.txt'
+[0.866s] reading manifest file 'kmr_communication.egg-info/SOURCES.txt'
+[0.868s] writing manifest file 'kmr_communication.egg-info/SOURCES.txt'
+[0.948s] running build_ext
+[0.952s] Creating /home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/install/kmr_communication/lib/python3.8/site-packages/site.py
+[0.952s] Creating /home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/install/kmr_communication/lib/python3.8/site-packages/kmr-communication.egg-link (link to .)
+[0.955s] Installing lbr_commander_node script to /home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/install/kmr_communication/lib/kmr_communication
+[0.955s] 
+[0.955s] Installed /home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/build/kmr_communication
+[0.955s] running install_data
+[0.956s] creating /home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/install/kmr_communication/share/ament_index
+[0.956s] creating /home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/install/kmr_communication/share/ament_index/resource_index
+[0.956s] creating /home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/install/kmr_communication/share/ament_index/resource_index/packages
+[0.956s] copying resource/kmr_communication -> /home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/install/kmr_communication/share/ament_index/resource_index/packages
+[0.959s] copying package.xml -> /home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/install/kmr_communication/share/kmr_communication
+[1.028s] Invoked command in '/home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/build/kmr_communication' returned '0': PYTHONPATH=/home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/install/kmr_communication/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --prefix /home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/install/kmr_communication --editable --build-directory /home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/build/kmr_communication/build --no-deps install_data --install-dir /home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/install/kmr_communication
