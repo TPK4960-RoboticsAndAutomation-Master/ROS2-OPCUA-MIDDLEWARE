@@ -1,4 +1,4 @@
-# Install script for directory: /home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/kmr_sim
+# Install script for directory: /home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/kmr_simulation
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

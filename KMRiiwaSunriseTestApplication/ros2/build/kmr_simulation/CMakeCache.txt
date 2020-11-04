@@ -392,7 +392,7 @@ geometry_msgs_DIR:PATH=/opt/ros/foxy/share/geometry_msgs/cmake
 kmr_simulation_BINARY_DIR:STATIC=/home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/build/kmr_simulation
 
 //Value Computed by CMake
-kmr_simulation_SOURCE_DIR:STATIC=/home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/kmr_sim
+kmr_simulation_SOURCE_DIR:STATIC=/home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/kmr_simulation
 
 //The directory containing a CMake configuration file for libstatistics_collector.
 libstatistics_collector_DIR:PATH=/opt/ros/foxy/share/libstatistics_collector/cmake
@@ -598,7 +598,7 @@ CMAKE_HAVE_PTHREAD_CREATE:INTERNAL=1
 CMAKE_HAVE_PTHREAD_H:INTERNAL=1
 //Source directory with the top level CMakeLists.txt file for this
 // project
-CMAKE_HOME_DIRECTORY:INTERNAL=/home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/kmr_sim
+CMAKE_HOME_DIRECTORY:INTERNAL=/home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/kmr_simulation
 //Install .so files without execute permission.
 CMAKE_INSTALL_SO_NO_EXE:INTERNAL=1
 //ADVANCED property for variable: CMAKE_LINKER

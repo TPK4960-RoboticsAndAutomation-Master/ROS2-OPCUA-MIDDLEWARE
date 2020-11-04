@@ -1,3 +1,5 @@
+import os
+from glob import glob
 from setuptools import setup
 
 package_name = 'kmr_communication'
@@ -9,7 +11,9 @@ setup(
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
-        ('share/' + package_name, ['package.xml']),
+        (os.path.join('share', package_name), ['package.xml']),
+        (os.path.join('share', package_name, 'launch'), glob(package_name + '/launch/*.launch.py')),
+        (os.path.join('share', package_name, 'config'), glob(package_name + '/config/*.yaml'))
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -20,7 +24,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'lbr_commander_node = kmr_communication.lbr_commander_node:main'
+            'test = kmr_communication.nodes.test:main',
+            'lbr = kmr_communication.nodes.lbr_commands_node:main'
         ],
     },
 )

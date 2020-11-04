@@ -1,3 +1,4 @@
 [console_scripts]
-lbr_commander_node = kmr_communication.lbr_commander_node:main
+lbr = kmr_communication.nodes.lbr_commands_node:main
+test = kmr_communication.nodes.test:main
 

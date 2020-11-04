@@ -1,0 +1,6 @@
+
+lbr_commands_node:
+  ros__parameters:
+
+    port: 30005
+    KMR/ip: '192.168.10.67'
