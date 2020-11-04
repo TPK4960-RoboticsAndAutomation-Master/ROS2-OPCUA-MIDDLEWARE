@@ -36,7 +36,7 @@ def generate_launch_description():
 
         Node(
             package=pkg_name,
-            executable="test",
-            name="test"
+            executable="opcua_ros2_hybrid",
+            name="hybrid_node"
         )
     ])
