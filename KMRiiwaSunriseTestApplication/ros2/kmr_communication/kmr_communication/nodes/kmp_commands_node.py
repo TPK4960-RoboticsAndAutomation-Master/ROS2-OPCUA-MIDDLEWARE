@@ -1,24 +1,22 @@
 import sys
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String, Float64
+from std_msgs.msg import String
 from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3, TransformStamped
 from rclpy.qos import qos_profile_sensor_data
 from rclpy.utilities import remove_ros_args
 import argparse
+
 from script.tcpSocket import TCPSocket
-from rclpy.action import ActionServer, GoalResponse
-from rclpy.callback_groups import ReentrantCallbackGroup
-from rclpy.executors import MultiThreadedExecutor
 
 
 def cl_red(msge): return '\033[31m' + msge + '\033[0m'
 
 
-class LbrCommandsNode(Node):
+class KmpCommandsNode(Node):
     def __init__(self,connection_type,robot):
-        super().__init__('lbr_commands_node')
-        self.name = 'lbr_commands_node'
+        super().__init__('kmp_commands_node')
+        self.name = 'kmp_commands_node'
         self.declare_parameter('port')
         port = int(self.get_parameter('port').value)
         if robot == 'KMR':
@@ -32,39 +30,28 @@ class LbrCommandsNode(Node):
         else:
             self.soc=None
 
-
-        self.callback_group = ReentrantCallbackGroup()
-        
-
         # Make a listener for relevant topics
-        sub_manipulator_vel = self.create_subscription(String, 'manipulator_vel', self.manipulatorVel_callback, 10)
+        sub_twist = self.create_subscription(Twist, 'cmd_vel', self.twist_callback, 10)
+        sub_pose = self.create_subscription(Pose, 'pose', self.pose_callback, 10)
         sub_shutdown = self.create_subscription(String, 'shutdown', self.shutdown_callback, 10)
-        #sub_statusdata=self.create_subscription(LbrStatusdata, 'lbr_statusdata', self.status_callback, 10,callback_group=self.callback_group)
-        #self.path_server = ActionServer(self,MoveManipulator,'move_manipulator', self.move_manipulator_callback,callback_group=self.callback_group)
-
-        self.point_publisher = self.create_publisher(Float64, 'vinkel', 20)
-
-        self.done_moving=False
-        self.last_path_variable = False
 
         while not self.soc.isconnected:
             pass
         self.get_logger().info('Node is ready')
 
-    def status_callback(self,data):
-        if (self.last_path_variable==False and data.path_finished == True):
-            self.done_moving = True
-            print("done_moving set to true")
-        self.last_path_variable = data.path_finished
 
     def shutdown_callback(self, data):
         print(data)
         msg = "shutdown"
         self.soc.send(msg)
-        self.soc.isconnected = False
+        #self.udp_soc.isconnected = False
 
-    def manipulatorVel_callback(self, data):
-        msg = 'setLBRmotion ' + data.data
+    def twist_callback(self, data):
+        msg = 'setTwist ' + str(data.linear.x) + " " + str(data.linear.y) + " " + str(data.angular.z)
+        self.soc.send(msg)
+
+    def pose_callback(self, data):
+        msg = 'setPose ' + str(data.position.x) + " " + str(data.position.y) + " " + str(data.orientation.z)
         self.soc.send(msg)
 
 
@@ -75,12 +62,12 @@ def main(argv=sys.argv[1:]):
     args = parser.parse_args(remove_ros_args(args=argv))
 
     rclpy.init(args=argv)
-    lbr_commands_node = LbrCommandsNode(args.connection,args.robot)
+    kmp_commands_node = KmpCommandsNode(args.connection,args.robot)
 
-    rclpy.spin(lbr_commands_node)
+    rclpy.spin(kmp_commands_node)
 
     try:
-        lbr_commands_node.destroy_node()
+        kmp_commands_node.destroy_node()
         rclpy.shutdown()
     except:
         print(cl_red('Error: ') + "rclpy shutdown failed")

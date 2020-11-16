@@ -26,6 +26,7 @@ setup(
         'console_scripts': [
             'test = kmr_communication.nodes.test:main',
             'lbr = kmr_communication.nodes.lbr_commands_node:main',
+            'kmp = kmr_communication.nodes.kmp_commands_node:main',
             'opcua_ros2_hybrid = kmr_communication.nodes.opcua_ros2_pubsub:main'
         ],
     },

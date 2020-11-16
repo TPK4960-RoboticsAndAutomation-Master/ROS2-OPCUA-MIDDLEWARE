@@ -1,31 +1,46 @@
 import rclpy
 from rclpy.node import Node
+from rclpy.executors import MultiThreadedExecutor
 from time import sleep
 from std_msgs.msg import String
+from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3, TransformStamped
 
 from opcua import ua, Client
 
-class MinimalPublisher(Node):
-
+class LBRPublisher(Node):
     def __init__(self):
-        super().__init__('hybrid_node')
+        super().__init__('lbr_hybrid_node')
         self.publisher_ = self.create_publisher(String, 'manipulator_vel', 10)
 
-    def publish_msg(self, msg):
-        self.publisher_.publish(msg)
-
     def event_notification(self, event):
-        print("New event recived: ", event.Message.Text)
-
         msg = String()
         msg.data = event.Message.Text
         self.publisher_.publish(msg)
+
+class KMPPublisher(Node):
+    def __init__(self):
+        super().__init__('kmp_hybrid_node')
+        self.publisher_ = self.create_publisher(Twist, 'cmd_vel', 10)
+
+    def event_notification(self, event):
+        #e = event.Message.Text
+        speed = 1.0
+        turn = 1.0
+        twist = Twist()
+        twist.linear.x = 1.0*speed
+        twist.linear.y = 1.0*speed
+        twist.linear.z = 1.0*speed
+        twist.angular.x = 0.0
+        twist.angular.y = 0.0
+        twist.angular.z = 1.0*turn
+        self.publisher_.publish(twist)
 
 
 def main(args=None):
     rclpy.init(args=args)
 
-    minimal_publisher = MinimalPublisher()
+    lbr_publisher = LBRPublisher()
+    kmp_publisher = KMPPublisher()
     
     """ OPC UA CLIENT """
     isConnected = False
@@ -38,16 +53,33 @@ def main(args=None):
             sleep(1)
     root = opcua_client.get_root_node()
     obj = root.get_child(["0:Objects", "2:MyObject"])
-    myevent = root.get_child(["0:Types", "0:EventTypes", "0:BaseEventType", "2:MyFirstEvent"])
-    sub = opcua_client.create_subscription(100, minimal_publisher)
-    handle = sub.subscribe_events(obj, myevent)
+
+    lbr_event = root.get_child(["0:Types", "0:EventTypes", "0:BaseEventType", "2:LBREvent"])
+    kmp_event = root.get_child(["0:Types", "0:EventTypes", "0:BaseEventType", "2:KMPEvent"])
+
+    lbr_sub = opcua_client.create_subscription(100, lbr_publisher)
+    lbr_handle = lbr_sub.subscribe_events(obj, lbr_event)
+
+    kmp_sub = opcua_client.create_subscription(100, kmp_publisher)
+    kmp_handle = kmp_sub.subscribe_events(obj, kmp_event)
     """ OPC UA CLIENT END """
 
-    rclpy.spin(minimal_publisher)
+    try:
+        executor = MultiThreadedExecutor(num_threads=2)
+        executor.add_node(lbr_publisher)
+        executor.add_node(kmp_publisher)
+        executor.spin()
+    finally:
+        executor.shutdown()
+        lbr_publisher.destroy_node()
+        kmp_publisher.destroy_node()
+        
+        lbr_sub.unsubscribe(lbr_handle)
+        lbr_sub.delete()
 
-    minimal_publisher.destroy_node()
-    sub.unsubscribe(handle)
-    sub.delete()
+        kmp_sub.unsubscribe(kmp_handle)
+        kmp_sub.delete()
+
     rclpy.shutdown()
 
 

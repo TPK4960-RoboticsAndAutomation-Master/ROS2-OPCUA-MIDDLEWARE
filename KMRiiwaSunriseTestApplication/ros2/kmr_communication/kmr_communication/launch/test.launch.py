@@ -36,6 +36,16 @@ def generate_launch_description():
 
         Node(
             package=pkg_name,
+            executable="kmp",
+            name="kmp_commands_node",
+            output="screen",
+            emulate_tty=True,
+            arguments=['-c', connection_type_TCP, '-ro', robot],
+            parameters=[param_dir]
+        ),
+
+        Node(
+            package=pkg_name,
             executable="opcua_ros2_hybrid",
             name="hybrid_node"
         )
