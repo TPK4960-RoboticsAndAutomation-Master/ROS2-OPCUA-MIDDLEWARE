@@ -23,16 +23,19 @@ class KMPPublisher(Node):
         self.publisher_ = self.create_publisher(Twist, 'cmd_vel', 10)
 
     def event_notification(self, event):
-        #e = event.Message.Text
-        speed = 1.0
+        """
+            event.Message,text = "speed x y th", e.g. "0.5 0 1 0"
+        """
+        e = event.Message.Text.split(" ")
+        speed = e[0]
         turn = 1.0
         twist = Twist()
-        twist.linear.x = 1.0*speed
-        twist.linear.y = 1.0*speed
-        twist.linear.z = 1.0*speed
+        twist.linear.x = e[1]*speed
+        twist.linear.y = e[2]*speed
+        twist.linear.z = 0.0
         twist.angular.x = 0.0
         twist.angular.y = 0.0
-        twist.angular.z = 1.0*turn
+        twist.angular.z = e[3]*speed #or turn
         self.publisher_.publish(twist)
 
 
