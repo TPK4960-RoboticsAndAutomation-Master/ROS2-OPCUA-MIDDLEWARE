@@ -1,1 +1,0 @@
-/home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/build/kmr_simulation/ament_cmake_environment_hooks/local_setup.sh

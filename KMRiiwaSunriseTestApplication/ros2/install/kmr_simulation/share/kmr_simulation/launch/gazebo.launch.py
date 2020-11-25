@@ -1,1 +1,0 @@
-/home/mathias/git/kmriiwa_test_ws/KMRiiwaSunriseTestApplication/ros2/kmr_simulation/launch/gazebo.launch.py
