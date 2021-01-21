@@ -16,8 +16,8 @@ def cl_red(msge): return '\033[31m' + msge + '\033[0m'
 
 class KmpCommandsNode(Node):
     def __init__(self,connection_type,robot):
-        super().__init__('kmp_commands_node')
-        self.name = 'kmp_commands_node'
+        super().__init__('kmp_command_node')
+        self.name = 'kmp_command_node'
         self.declare_parameter('port')
         port = int(self.get_parameter('port').value)
         if robot == 'KMR':

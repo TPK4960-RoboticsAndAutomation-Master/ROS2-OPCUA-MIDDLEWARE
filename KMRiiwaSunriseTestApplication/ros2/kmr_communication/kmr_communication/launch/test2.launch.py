@@ -7,7 +7,7 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 def generate_launch_description(argv=sys.argv[1:]):
-    pkg_name = 'kmr_middleware'
+    pkg_name = 'kmr_communication'
     connection_type_TCP='TCP'
     robot="KMR"
 
@@ -27,8 +27,8 @@ def generate_launch_description(argv=sys.argv[1:]):
 
         Node(
             package=pkg_name,
-            executable="lbr_command_node.py",
-            name="lbr_command_node",
+            executable="lbr",
+            name="lbr_command_node2",
             output="screen",
             emulate_tty=True,
             arguments=['-c', connection_type_TCP, '-ro', robot],
@@ -37,8 +37,8 @@ def generate_launch_description(argv=sys.argv[1:]):
 
         Node(
             package=pkg_name,
-            executable="kmp_command_node.py",
-            name="kmp_command_node",
+            executable="kmp",
+            name="kmp_command_node2",
             output="screen",
             emulate_tty=True,
             arguments=['-c', connection_type_TCP, '-ro', robot],
@@ -47,7 +47,7 @@ def generate_launch_description(argv=sys.argv[1:]):
 
         Node(
             package=pkg_name,
-            executable="opcua_ros2_pubsub.py",
-            name="hybrid_node"
+            executable="opcua_ros2_hybrid",
+            name="hybrid_node2"
         )
     ])

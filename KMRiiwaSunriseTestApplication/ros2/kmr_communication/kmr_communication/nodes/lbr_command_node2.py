@@ -7,7 +7,7 @@ from std_msgs.msg import String, Float64
 from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3, TransformStamped
 from rclpy.utilities import remove_ros_args
 import argparse
-from tcp_socket import TCPSocket
+from tcp_socket2 import TCPSocket
 from rclpy.action import ActionServer, GoalResponse
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
@@ -17,10 +17,10 @@ def cl_red(msge): return '\033[31m' + msge + '\033[0m'
 def cl_green(msge): return '\033[32m' + msge + '\033[0m'
 
 
-class LbrCommandsNode(Node):
+class LbrCommandNode(Node):
     def __init__(self,connection_type,robot):
-        super().__init__('lbr_commands_node')
-        self.name = 'lbr_commands_node'
+        super().__init__('lbr_command_node2')
+        self.name = 'lbr_command_node2'
         self.declare_parameter('port')
         port = int(self.get_parameter('port').value)
         if robot == 'KMR':
@@ -85,9 +85,9 @@ def main(argv=sys.argv[1:]):
 
     while True:
         rclpy.init(args=argv)
-        lbr_commands_node = LbrCommandsNode(args.connection,args.robot)
+        lbr_command_node = LbrCommandNode(args.connection,args.robot)
 
-        rclpy.spin(lbr_commands_node)
+        rclpy.spin(lbr_command_node)
 
 
 if __name__ == '__main__':

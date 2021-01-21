@@ -58,8 +58,8 @@ install(
 install(
   PROGRAMS
     #nodes/tcpSocket.py
-    nodes/kmp_commands_node.py
-    nodes/lbr_commands_node.py
+    nodes/kmp_command_node.py
+    nodes/lbr_command_node.py
     nodes/opcua_ros2_pubsub.py
     script/tcp_socket.py
     DESTINATION lib/${PROJECT_NAME}
