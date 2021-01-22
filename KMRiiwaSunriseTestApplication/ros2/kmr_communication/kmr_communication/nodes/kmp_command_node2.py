@@ -8,10 +8,11 @@ from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3, Transform
 from rclpy.utilities import remove_ros_args
 import argparse
 
-from tcp_socket2 import TCPSocket
+from sockets import TCPSocket, UDPSocket
 
 
 def cl_red(msge): return '\033[31m' + msge + '\033[0m'
+def cl_green(msge): return '\033[32m' + msge + '\033[0m'
 
 
 class KmpCommandNode(Node):
@@ -28,6 +29,8 @@ class KmpCommandNode(Node):
 
         if connection_type == 'TCP':
             self.soc = TCPSocket(ip, port, self.name, self)
+        elif connection_type == 'UDP':
+            self.soc = UDPSocket(ip, port, self.name, self)
         else:
             self.soc=None
 
@@ -45,7 +48,7 @@ class KmpCommandNode(Node):
         print(data)
         msg = "shutdown"
         self.soc.send(msg)
-        #self.udp_soc.isconnected = False
+        self.soc.close()
 
     def twist_callback(self, data):
         msg = 'setTwist ' + str(data.linear.x) + " " + str(data.linear.y) + " " + str(data.angular.z)

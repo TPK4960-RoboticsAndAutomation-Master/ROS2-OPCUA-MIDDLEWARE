@@ -39,15 +39,16 @@ def cl_pink(msge): return '\033[95m' + msge + '\033[0m'
 def cl_lightcyan(msge): return '\033[96m' + msge + '\033[0m'
 
 
-class TCPSocket:
+class Socket:
     def __init__(self, ip, port, node_name, node):
-        self.BUFFER_SIZE = 4000
+        self.BUFFER_SIZE = 4096
         self.isconnected = False
         self.node = node
         self.node_name = node_name
         self.ip = ip
         self.port = port
-        self.tcp = None
+        self.server_address = (ip, port)
+        self.conn = None
 
         #Data
         self.odometry = []
@@ -62,21 +63,34 @@ class TCPSocket:
     def close(self):
         self.isconnected = False
 
-    def connect_to_socket(self):
+    def init_socket(self, socket_type, option, option_value):
         print(cl_cyan('Starting up node:'), self.node_name, 'IP:', self.ip, 'Port:', self.port)
         try:
-            self.tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            server_address= (self.ip,self.port)
-            self.tcp.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
-            self.tcp.bind(server_address)
+            self.conn = socket.socket(socket.AF_INET, socket_type)
+            self.conn.setsockopt(socket.SOL_SOCKET, option, option_value)
+            self.conn.bind(self.server_address)
         except:
            print(cl_red('Error: ') + "Connection for KUKA cannot assign requested address:", self.ip, self.port)
 
-        self.tcp.listen(3) # Server can accept 3 connections
+    def shutdown(self):
+        print("SHUTTING DOWN")
+        self.conn.close()
+        self.isconnected = False
+        print(cl_lightred('Connection is closed!'))
+        self.node.tear_down()
+
+class TCPSocket(Socket):
+    def __init__(self, ip, port, node_name, node):
+        super().__init__(ip, port, node_name, node)
+
+    def connect_to_socket(self):
+        self.init_socket(socket.SOCK_STREAM, socket.SO_REUSEADDR, 1)
+
+        self.conn.listen(3) # Server can accept 3 connections
         while (not self.isconnected):
             try:
-                self.connection, client_address = self.tcp.accept()
-                self.tcp.settimeout(0.01)
+                self.client_socket, client_address = self.conn.accept()
+                self.conn.settimeout(0.01)
                 self.isconnected = True
                 print(cl_green("Connected successfully!"))
             except:
@@ -89,26 +103,59 @@ class TCPSocket:
             except:
                 t = 0
 
-
-        print("SHUTTING DOWN")
-        self.connection.shutdown(socket.SHUT_RDWR)
-        self.connection.close()
-        self.tcp.close()
-        self.isconnected = False
-        print(cl_lightred('Connection is closed!'))
-        self.node.tear_down()
-        #rclpy.shutdown()
-
+        self.client_socket.shutdown(socket.SHUT_RDWR)
+        self.client_socket.close()
+        self.shutdown()
 
     def send(self, cmd):
         try:
-            self.connection.sendall((cmd + '\r\n').encode("utf-8"))
+            self.client_socket.sendall((cmd + '\r\n').encode("utf-8"))
         except:
             print(cl_red('Error: ') + "sending message thread failed")
 
     def recvmsg(self):
-        msg = self.connection.recv(1024).decode("utf-8")
+        msg = self.client_socket.recv(1024).decode("utf-8")
         print(cl_lightblue(msg))
         if msg == "shutdown":
             self.close()
         return msg
+
+class UDPSocket(Socket):
+    def __init__(self, ip, port, node_name, node):
+        super().__init__(ip, port, node_name, node)
+
+    def connect_to_socket(self):
+        self.init_socket(socket.SOCK_DGRAM, socket.SO_RCVBUF, 1048576)
+
+        while (not self.isconnected):
+            try:
+                data, self.client_address = self.recvmsg() #self.udp.recvfrom(self.BUFFER_SIZE)
+                self.isconnected = True
+                print(cl_green("Connected successfully!"))
+                self.send("Hello from server!")
+            except:
+                t=0
+
+        while self.isconnected:
+            try:
+                data, _ = self.recvmsg()
+            except:
+                t = 0
+
+        self.shutdown()
+
+
+    def send(self, cmd):
+        try:
+            self.conn.sendto((cmd + '\r\n').encode("utf-8"), self.client_address)
+        except:
+            print(cl_red('Error: ') + "sending message thread failed")
+
+    def recvmsg(self):
+        data, server = self.conn.recvfrom(self.BUFFER_SIZE)
+        msg = data.decode("utf-8")
+        print(cl_lightblue(msg))
+        if msg == "shutdown":
+            self.close()
+        return msg, server
+    

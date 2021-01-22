@@ -39,15 +39,15 @@ def cl_pink(msge): return '\033[95m' + msge + '\033[0m'
 def cl_lightcyan(msge): return '\033[96m' + msge + '\033[0m'
 
 
-class TCPSocket:
+class UDPSocket:
     def __init__(self, ip, port, node_name, node):
-        self.BUFFER_SIZE = 4000
+        self.BUFFER_SIZE = 4096
         self.isconnected = False
         self.node = node
         self.node_name = node_name
         self.ip = ip
         self.port = port
-        self.tcp = None
+        self.udp = None
 
         #Data
         self.odometry = []
@@ -65,35 +65,31 @@ class TCPSocket:
     def connect_to_socket(self):
         print(cl_cyan('Starting up node:'), self.node_name, 'IP:', self.ip, 'Port:', self.port)
         try:
-            self.tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            server_address= (self.ip,self.port)
-            self.tcp.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
-            self.tcp.bind(server_address)
+            self.udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            self.udp.settimeout(0.01)
+            self.udp.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF,1048576)
+            self.udp.bind((self.ip, self.port))
         except:
            print(cl_red('Error: ') + "Connection for KUKA cannot assign requested address:", self.ip, self.port)
 
-        self.tcp.listen(3) # Server can accept 3 connections
         while (not self.isconnected):
             try:
-                self.connection, client_address = self.tcp.accept()
-                self.tcp.settimeout(0.01)
+                data, self.client_address = self.recvmsg() #self.udp.recvfrom(self.BUFFER_SIZE)
                 self.isconnected = True
                 print(cl_green("Connected successfully!"))
+                self.send("Hello from server!")
             except:
                 t=0
-        time.sleep(1) 
 
         while self.isconnected:
             try:
-                data = self.recvmsg()
+                data, _ = self.recvmsg()
             except:
                 t = 0
 
 
         print("SHUTTING DOWN")
-        self.connection.shutdown(socket.SHUT_RDWR)
-        self.connection.close()
-        self.tcp.close()
+        self.udp.close()
         self.isconnected = False
         print(cl_lightred('Connection is closed!'))
         self.node.tear_down()
@@ -102,13 +98,14 @@ class TCPSocket:
 
     def send(self, cmd):
         try:
-            self.connection.sendall((cmd + '\r\n').encode("utf-8"))
+            self.udp.sendto((cmd + '\r\n').encode("utf-8"), self.client_address)
         except:
             print(cl_red('Error: ') + "sending message thread failed")
 
     def recvmsg(self):
-        msg = self.connection.recv(1024).decode("utf-8")
+        data, server = self.udp.recvfrom(self.BUFFER_SIZE)
+        msg = data.decode("utf-8")
         print(cl_lightblue(msg))
         if msg == "shutdown":
             self.close()
-        return msg
+        return msg, server

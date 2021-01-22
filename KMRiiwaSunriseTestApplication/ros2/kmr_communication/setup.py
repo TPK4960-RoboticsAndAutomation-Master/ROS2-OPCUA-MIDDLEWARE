@@ -15,7 +15,11 @@ setup(
         (os.path.join('share', package_name, 'launch'), glob(package_name + '/launch/*.launch.py')),
         (os.path.join('share', package_name, 'config'), glob(package_name + '/config/*.yaml'))
     ],
-    scripts=[package_name + '/script/tcp_socket2.py'],
+    scripts=[
+        package_name + '/script/tcp_socket2.py', 
+        package_name + '/script/udp_socket.py',
+        package_name + '/script/sockets.py'
+    ],
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='mathias',

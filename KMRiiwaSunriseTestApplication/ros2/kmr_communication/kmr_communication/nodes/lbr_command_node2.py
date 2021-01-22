@@ -7,7 +7,7 @@ from std_msgs.msg import String, Float64
 from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3, TransformStamped
 from rclpy.utilities import remove_ros_args
 import argparse
-from tcp_socket2 import TCPSocket
+from sockets import TCPSocket, UDPSocket
 from rclpy.action import ActionServer, GoalResponse
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
@@ -31,6 +31,8 @@ class LbrCommandNode(Node):
 
         if connection_type == 'TCP':
             self.soc = TCPSocket(ip, port, self.name, self)
+        elif connection_type == 'UDP':
+            self.soc = UDPSocket(ip, port, self.name, self)
         else:
             self.soc=None
 

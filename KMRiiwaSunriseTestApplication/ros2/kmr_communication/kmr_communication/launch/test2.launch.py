@@ -8,7 +8,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description(argv=sys.argv[1:]):
     pkg_name = 'kmr_communication'
-    connection_type_TCP='TCP'
+    connection_type='UDP'
     robot="KMR"
 
     param_dir = LaunchConfiguration(
@@ -31,7 +31,7 @@ def generate_launch_description(argv=sys.argv[1:]):
             name="lbr_command_node2",
             output="screen",
             emulate_tty=True,
-            arguments=['-c', connection_type_TCP, '-ro', robot],
+            arguments=['-c', connection_type, '-ro', robot],
             parameters=[param_dir]
         ), 
 
@@ -41,7 +41,7 @@ def generate_launch_description(argv=sys.argv[1:]):
             name="kmp_command_node2",
             output="screen",
             emulate_tty=True,
-            arguments=['-c', connection_type_TCP, '-ro', robot],
+            arguments=['-c', connection_type, '-ro', robot],
             parameters=[param_dir]
         ),
 
