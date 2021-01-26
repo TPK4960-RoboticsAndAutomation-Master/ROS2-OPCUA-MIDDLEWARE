@@ -74,6 +74,7 @@ class Socket:
 
     def shutdown(self):
         print("SHUTTING DOWN")
+        self.node.publish_status(0)
         self.conn.close()
         self.isconnected = False
         print(cl_lightred('Connection is closed!'))
@@ -92,6 +93,7 @@ class TCPSocket(Socket):
                 self.client_socket, client_address = self.conn.accept()
                 self.conn.settimeout(0.01)
                 self.isconnected = True
+                self.node.publish_status(1)
                 print(cl_green("Connected successfully!"))
             except:
                 t=0
@@ -131,6 +133,7 @@ class UDPSocket(Socket):
             try:
                 data, self.client_address = self.recvmsg() #self.udp.recvfrom(self.BUFFER_SIZE)
                 self.isconnected = True
+                self.node.publish_status(1)
                 print(cl_green("Connected successfully!"))
                 self.send("Hello from server!")
             except:

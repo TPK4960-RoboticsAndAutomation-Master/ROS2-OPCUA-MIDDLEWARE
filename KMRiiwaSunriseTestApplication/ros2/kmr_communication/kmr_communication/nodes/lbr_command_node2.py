@@ -46,7 +46,8 @@ class LbrCommandNode(Node):
         #sub_statusdata=self.create_subscription(LbrStatusdata, 'lbr_statusdata', self.status_callback, 10,callback_group=self.callback_group)
         #self.path_server = ActionServer(self,MoveManipulator,'move_manipulator', self.move_manipulator_callback,callback_group=self.callback_group)
 
-        self.point_publisher = self.create_publisher(Float64, 'vinkel', 20)
+        # Publishers
+        self.lbr_status_publisher = self.create_publisher(String, 'lbr_status', 10)
 
         self.done_moving=False
         self.last_path_variable = False
@@ -69,6 +70,14 @@ class LbrCommandNode(Node):
     def manipulatorVel_callback(self, data):
         msg = 'setLBRmotion ' + data.data
         self.soc.send(msg)
+
+    def publish_status(self, status):
+        """
+            'status' is either 0 (offline) or 1 (online).
+        """
+        msg = String()
+        msg.data = "lbr_online" if status else "lbr_offline"
+        self.lbr_status_publisher.publish(msg)
 
     def tear_down(self):
         try:

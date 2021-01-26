@@ -8,7 +8,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description(argv=sys.argv[1:]):
     pkg_name = 'kmr_communication'
-    connection_type='UDP'
+    connection_type='TCP'
     robot="KMR"
 
     param_dir = LaunchConfiguration(

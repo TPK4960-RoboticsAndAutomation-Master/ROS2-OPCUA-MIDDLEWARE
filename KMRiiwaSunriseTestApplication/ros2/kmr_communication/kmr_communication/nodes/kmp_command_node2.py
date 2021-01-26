@@ -39,6 +39,10 @@ class KmpCommandNode(Node):
         sub_pose = self.create_subscription(Pose, 'pose', self.pose_callback, 10)
         sub_shutdown = self.create_subscription(String, 'shutdown', self.shutdown_callback, 10)
 
+        # Publishers
+        self.kmp_status_publisher = self.create_publisher(String, 'kmp_status', 10)
+
+
         while not self.soc.isconnected:
             pass
         self.get_logger().info('Node is ready')
@@ -57,6 +61,14 @@ class KmpCommandNode(Node):
     def pose_callback(self, data):
         msg = 'setPose ' + str(data.position.x) + " " + str(data.position.y) + " " + str(data.orientation.z)
         self.soc.send(msg)
+
+    def publish_status(self, status):
+        """
+            'status' is either 0 (offline) or 1 (online).
+        """
+        msg = String()
+        msg.data = "kmp_online" if status else "kmp_offline"
+        self.kmp_status_publisher.publish(msg)
 
     def tear_down(self):
         try:

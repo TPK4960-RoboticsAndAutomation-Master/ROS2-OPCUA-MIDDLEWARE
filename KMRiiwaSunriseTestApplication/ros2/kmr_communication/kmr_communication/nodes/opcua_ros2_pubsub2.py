@@ -9,11 +9,14 @@ from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3, Transform
 
 from opcua import ua, Client
 
-class LBRPublisher(Node):
-    def __init__(self):
+class LBRPubSub(Node):
+    def __init__(self, ua_obj):
         super().__init__('lbr_hybrid_node2')
         self.publisher_ = self.create_publisher(String, 'manipulator_vel', 10)
         self.shutdown_publisher_ = self.create_publisher(String, 'shutdown', 10)
+        self.status_subscriber = self.create_subscription(String, 'lbr_status', self.status_callback, 10)
+        self.server_obj = ua_obj
+
 
     def event_notification(self, event):
         msg = String()
@@ -23,10 +26,17 @@ class LBRPublisher(Node):
         else:
             self.publisher_.publish(msg)
 
-class KMPPublisher(Node):
-    def __init__(self):
-        super().__init__('kmp_hybrid_node')
+    def status_callback(self, msg):
+        method = "update_status"
+        self.server_obj.call_method("2:" + method, str(msg.data))
+        
+
+class KMPPubSub(Node):
+    def __init__(self, ua_obj):
+        super().__init__('kmp_hybrid_node2')
         self.publisher_ = self.create_publisher(Twist, 'cmd_vel', 10)
+        self.status_subscriber = self.create_subscription(String, 'kmp_status', self.status_callback, 10)
+        self.server_obj = ua_obj
 
     def event_notification(self, event):
         """
@@ -44,16 +54,20 @@ class KMPPublisher(Node):
         twist.angular.z = float(e[3])*speed #or turn
         self.publisher_.publish(twist)
 
+    def status_callback(self, msg):
+        method = "update_status"
+        self.server_obj.call_method("2:" + method, str(msg.data))
+
 
 def main(args=None):
     rclpy.init(args=args)
-
-    lbr_publisher = LBRPublisher()
-    kmp_publisher = KMPPublisher()
     
-    """ OPC UA CLIENT """
+    """ 
+        OPC UA CLIENT 
+        For receiving commands from AAS
+    """
     isConnected = False
-    opcua_client = Client("opc.tcp://0.0.0.0:4840/freeopcua/server/")
+    opcua_client = Client("opc.tcp://10.22.25.161:4840/freeopcua/server/")
     while not isConnected:
         try:
             opcua_client.connect()
@@ -65,6 +79,9 @@ def main(args=None):
 
     lbr_event = root.get_child(["0:Types", "0:EventTypes", "0:BaseEventType", "2:LBREvent"])
     kmp_event = root.get_child(["0:Types", "0:EventTypes", "0:BaseEventType", "2:KMPEvent"])
+    
+    lbr_publisher = LBRPubSub(obj)
+    kmp_publisher = KMPPubSub(obj)
 
     lbr_sub = opcua_client.create_subscription(100, lbr_publisher)
     lbr_handle = lbr_sub.subscribe_events(obj, lbr_event)
@@ -72,6 +89,7 @@ def main(args=None):
     kmp_sub = opcua_client.create_subscription(100, kmp_publisher)
     kmp_handle = kmp_sub.subscribe_events(obj, kmp_event)
     """ OPC UA CLIENT END """
+
 
     try:
         executor = MultiThreadedExecutor(num_threads=2)
