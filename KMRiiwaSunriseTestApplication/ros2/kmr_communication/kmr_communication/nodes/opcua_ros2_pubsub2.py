@@ -27,6 +27,7 @@ class LBRPubSub(Node):
             self.publisher_.publish(msg)
 
     def status_callback(self, msg):
+        print("status update callback from lbr")
         method = "update_status"
         self.server_obj.call_method("2:" + method, str(msg.data))
         
@@ -55,6 +56,7 @@ class KMPPubSub(Node):
         self.publisher_.publish(twist)
 
     def status_callback(self, msg):
+        print("status update callback from kmp")
         method = "update_status"
         self.server_obj.call_method("2:" + method, str(msg.data))
 

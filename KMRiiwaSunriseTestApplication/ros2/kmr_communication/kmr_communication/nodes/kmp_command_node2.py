@@ -19,7 +19,10 @@ class KmpCommandNode(Node):
     def __init__(self,connection_type,robot):
         super().__init__('kmp_command_node2')
         self.name = 'kmp_command_node2'
+        self.robot = robot
         self.declare_parameter('port')
+        self.declare_parameter('id')
+        self.id = self.get_parameter('id').value
         port = int(self.get_parameter('port').value)
         if robot == 'KMR':
             self.declare_parameter('KMR/ip')
@@ -67,7 +70,7 @@ class KmpCommandNode(Node):
             'status' is either 0 (offline) or 1 (online).
         """
         msg = String()
-        msg.data = "kmp_online" if status else "kmp_offline"
+        msg.data = self.id + ":" + self.robot + ":kmp:" + str(status)
         self.kmp_status_publisher.publish(msg)
 
     def tear_down(self):

@@ -48,6 +48,8 @@ def generate_launch_description(argv=sys.argv[1:]):
         Node(
             package=pkg_name,
             executable="opcua_ros2_hybrid",
-            name="hybrid_node2"
+            name="hybrid_node2",
+            output="screen",
+            emulate_tty=True,
         )
     ])

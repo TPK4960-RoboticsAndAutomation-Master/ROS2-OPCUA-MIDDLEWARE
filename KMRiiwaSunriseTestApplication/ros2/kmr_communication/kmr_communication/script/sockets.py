@@ -18,7 +18,6 @@
 import threading
 import time
 import os
-import rclpy
 import socket
 
 
