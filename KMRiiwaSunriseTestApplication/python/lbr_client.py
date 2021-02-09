@@ -1,3 +1,4 @@
+import os
 import socket
 from threading import Thread
 
@@ -10,6 +11,8 @@ soc.connect((HOST, PORT))
 def receive():
     while True:
         data = soc.recv(1024)
+        if len(data) == 0:
+            os._exit(1)
         print('Received', repr(data))
 
 def send():

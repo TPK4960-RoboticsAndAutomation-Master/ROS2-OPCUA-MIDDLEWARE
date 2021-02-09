@@ -1,3 +1,4 @@
+import os
 import socket
 from threading import Thread
 
@@ -11,6 +12,8 @@ soc.sendto(b"Hello from kmp client", server_address)
 def receive():
     while True:
         data, server = soc.recvfrom(1024)
+        if len(data) == 0:
+            os._exit(1)
         print('Received', repr(data))
 
 def send():
