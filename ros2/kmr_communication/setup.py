@@ -16,8 +16,6 @@ setup(
         (os.path.join('share', package_name, 'config'), glob(package_name + '/config/*.yaml'))
     ],
     scripts=[
-        package_name + '/script/tcp_socket2.py', 
-        package_name + '/script/udp_socket.py',
         package_name + '/script/sockets.py'
     ],
     install_requires=['setuptools'],
@@ -29,9 +27,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'lbr = kmr_communication.nodes.lbr_command_node2:main',
-            'kmp = kmr_communication.nodes.kmp_command_node2:main',
-            'opcua_ros2_hybrid = kmr_communication.nodes.opcua_ros2_pubsub2:main',
+            'lbr = kmr_communication.nodes.lbr_command_node:main',
+            'kmp = kmr_communication.nodes.kmp_command_node:main',
+            'opcua_ros2_hybrid = kmr_communication.nodes.opcua_ros2_pubsub:main',
         ],
     },
 )

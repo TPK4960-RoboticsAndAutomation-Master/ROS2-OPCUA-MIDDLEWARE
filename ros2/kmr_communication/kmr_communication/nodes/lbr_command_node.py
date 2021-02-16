@@ -2,16 +2,12 @@
 
 import sys
 import rclpy
-from rclpy.node import Node
-from std_msgs.msg import String, Float64
-from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3, TransformStamped
-from rclpy.utilities import remove_ros_args
 import argparse
-from sockets import TCPSocket, UDPSocket
-from rclpy.action import ActionServer, GoalResponse
-from rclpy.callback_groups import ReentrantCallbackGroup
+from std_msgs.msg import String, Float64
+from rclpy.node import Node
+from rclpy.utilities import remove_ros_args
 from rclpy.executors import MultiThreadedExecutor
-
+from sockets import TCPSocket, UDPSocket
 
 def cl_red(msge): return '\033[31m' + msge + '\033[0m'
 def cl_green(msge): return '\033[32m' + msge + '\033[0m'
@@ -19,8 +15,8 @@ def cl_green(msge): return '\033[32m' + msge + '\033[0m'
 
 class LbrCommandNode(Node):
     def __init__(self,connection_type,robot):
-        super().__init__('lbr_command_node2')
-        self.name = 'lbr_command_node2'
+        super().__init__('lbr_command_node')
+        self.name = 'lbr_command_node'
         self.robot = robot
         self.declare_parameter('port')
         self.declare_parameter('id')
@@ -38,39 +34,25 @@ class LbrCommandNode(Node):
             self.soc = UDPSocket(ip, port, self.name, self)
         else:
             self.soc=None
-
-
-        self.callback_group = ReentrantCallbackGroup()
         
-
         # Make a listener for relevant topics
-        sub_manipulator_vel = self.create_subscription(String, 'manipulator_vel', self.manipulatorVel_callback, 10)
+        sub_manipulator_vel = self.create_subscription(String, 'manipulator_vel', self.manipulator_vel_callback, 10)
         sub_shutdown = self.create_subscription(String, 'shutdown', self.shutdown_callback, 10)
-        #sub_statusdata=self.create_subscription(LbrStatusdata, 'lbr_statusdata', self.status_callback, 10,callback_group=self.callback_group)
-        #self.path_server = ActionServer(self,MoveManipulator,'move_manipulator', self.move_manipulator_callback,callback_group=self.callback_group)
 
         # Publishers
         self.lbr_status_publisher = self.create_publisher(String, 'lbr_status', 10)
 
-        self.done_moving=False
-        self.last_path_variable = False
-
         while not self.soc.isconnected:
             pass
+            
         self.get_logger().info('Node is ready')
-
-    def status_callback(self,data):
-        if (self.last_path_variable==False and data.path_finished == True):
-            self.done_moving = True
-            print("done_moving set to true")
-        self.last_path_variable = data.path_finished
 
     def shutdown_callback(self, data):
         msg = "shutdown"
         self.soc.send(msg)
         self.soc.close()
 
-    def manipulatorVel_callback(self, data):
+    def manipulator_vel_callback(self, data):
         msg = 'setLBRmotion ' + data.data
         self.soc.send(msg)
 

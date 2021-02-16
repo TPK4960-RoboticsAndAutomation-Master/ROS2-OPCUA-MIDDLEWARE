@@ -1,25 +1,9 @@
 #!/usr/bin/env python3
 
-# Copyright 2019 Nina Marie Wahl and Charlotte Heggem.
-# Copyright 2019 Norwegian University of Science and Technology.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 import threading
 import time
 import os
 import socket
-
 
 def cl_black(msge): return '\033[30m' + msge + '\033[0m'
 def cl_red(msge): return '\033[31m' + msge + '\033[0m'
@@ -48,14 +32,6 @@ class Socket:
         self.port = port
         self.server_address = (ip, port)
         self.conn = None
-
-        #Data
-        self.odometry = []
-        self.laserScanB1 = []
-        self.laserScanB4 = []
-        self.kmp_statusdata = None
-        self.lbr_statusdata = None
-        self.lbr_sensordata = []
 
         threading.Thread(target=self.connect_to_socket).start()
 
@@ -96,11 +72,12 @@ class TCPSocket(Socket):
                 print(cl_green("Connected successfully!"))
             except:
                 t=0
+
         time.sleep(1) 
 
         while self.isconnected:
             try:
-                data = self.recvmsg()
+                data = self.receive_message()
             except:
                 t = 0
 
@@ -114,7 +91,7 @@ class TCPSocket(Socket):
         except:
             print(cl_red('Error: ') + "sending message thread failed")
 
-    def recvmsg(self):
+    def receive_message(self):
         msg = self.client_socket.recv(1024).decode("utf-8")
         print(cl_lightblue(msg))
         if msg == "shutdown":
@@ -130,7 +107,7 @@ class UDPSocket(Socket):
 
         while (not self.isconnected):
             try:
-                data, self.client_address = self.recvmsg() #self.udp.recvfrom(self.BUFFER_SIZE)
+                data, self.client_address = self.receive_message()
                 self.isconnected = True
                 self.node.publish_status(1)
                 print(cl_green("Connected successfully!"))
@@ -140,7 +117,7 @@ class UDPSocket(Socket):
 
         while self.isconnected:
             try:
-                data, _ = self.recvmsg()
+                data, _ = self.receive_message()
             except:
                 t = 0
 
@@ -153,7 +130,7 @@ class UDPSocket(Socket):
         except:
             print(cl_red('Error: ') + "sending message thread failed")
 
-    def recvmsg(self):
+    def receive_message(self):
         data, server = self.conn.recvfrom(self.BUFFER_SIZE)
         msg = data.decode("utf-8")
         print(cl_lightblue(msg))

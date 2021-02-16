@@ -74,11 +74,10 @@ public class TcpSocket implements ISocket {
 			while(!this.inputStream.ready()){}
 			line=this.inputStream.readLine();
 			return line;
-		
-			} catch(Exception e) {
-				System.out.println(this.nodename+ " could not receive message from TCP connection on port: "+ this.COMport + " Error: " +e);
-				return "error";
-			}
+		} catch(Exception e) {
+			System.out.println(this.nodename+ " could not receive message from TCP connection on port: "+ this.COMport + " Error: " +e);
+			return "error";
+		}
 	}	
      
 	public void close() {
