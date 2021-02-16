@@ -28,7 +28,7 @@ def generate_launch_description(argv=sys.argv[1:]):
         Node(
             package=pkg_name,
             executable="lbr",
-            name="lbr_command_node2",
+            name="lbr_command_node",
             output="screen",
             emulate_tty=True,
             arguments=['-c', connection_type, '-ro', robot],
@@ -38,7 +38,7 @@ def generate_launch_description(argv=sys.argv[1:]):
         Node(
             package=pkg_name,
             executable="kmp",
-            name="kmp_command_node2",
+            name="kmp_command_node",
             output="screen",
             emulate_tty=True,
             arguments=['-c', connection_type, '-ro', robot],
@@ -48,7 +48,7 @@ def generate_launch_description(argv=sys.argv[1:]):
         Node(
             package=pkg_name,
             executable="opcua_ros2_hybrid",
-            name="hybrid_node2",
+            name="hybrid_node",
             output="screen",
             emulate_tty=True,
         )

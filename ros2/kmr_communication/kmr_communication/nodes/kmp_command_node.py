@@ -2,14 +2,12 @@
 
 import sys
 import rclpy
-from rclpy.node import Node
-from std_msgs.msg import String
-from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3, TransformStamped
-from rclpy.utilities import remove_ros_args
 import argparse
-
+from std_msgs.msg import String
+from geometry_msgs.msg import Pose, Twist
+from rclpy.node import Node
+from rclpy.utilities import remove_ros_args
 from sockets import TCPSocket, UDPSocket
-
 
 def cl_red(msge): return '\033[31m' + msge + '\033[0m'
 def cl_green(msge): return '\033[32m' + msge + '\033[0m'
@@ -17,8 +15,8 @@ def cl_green(msge): return '\033[32m' + msge + '\033[0m'
 
 class KmpCommandNode(Node):
     def __init__(self,connection_type,robot):
-        super().__init__('kmp_command_node2')
-        self.name = 'kmp_command_node2'
+        super().__init__('kmp_command_node')
+        self.name = 'kmp_command_node'
         self.robot = robot
         self.declare_parameter('port')
         self.declare_parameter('id')
@@ -45,9 +43,9 @@ class KmpCommandNode(Node):
         # Publishers
         self.kmp_status_publisher = self.create_publisher(String, 'kmp_status', 10)
 
-
         while not self.soc.isconnected:
             pass
+
         self.get_logger().info('Node is ready')
 
 

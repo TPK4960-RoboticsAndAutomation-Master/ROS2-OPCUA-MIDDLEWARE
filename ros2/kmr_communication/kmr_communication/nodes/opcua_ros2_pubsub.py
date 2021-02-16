@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 
 import rclpy
-from rclpy.node import Node
-from rclpy.executors import MultiThreadedExecutor
 from time import sleep
 from std_msgs.msg import String
 from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3, TransformStamped
-
+from rclpy.node import Node
+from rclpy.executors import MultiThreadedExecutor
 from opcua import ua, Client
+
 
 class LBRPubSub(Node):
     def __init__(self, ua_obj):
-        super().__init__('lbr_hybrid_node2')
+        super().__init__('lbr_hybrid_node')
         self.publisher_ = self.create_publisher(String, 'manipulator_vel', 10)
         self.shutdown_publisher_ = self.create_publisher(String, 'shutdown', 10)
         self.status_subscriber = self.create_subscription(String, 'lbr_status', self.status_callback, 10)
@@ -34,7 +34,7 @@ class LBRPubSub(Node):
 
 class KMPPubSub(Node):
     def __init__(self, ua_obj):
-        super().__init__('kmp_hybrid_node2')
+        super().__init__('kmp_hybrid_node')
         self.publisher_ = self.create_publisher(Twist, 'cmd_vel', 10)
         self.status_subscriber = self.create_subscription(String, 'kmp_status', self.status_callback, 10)
         self.server_obj = ua_obj

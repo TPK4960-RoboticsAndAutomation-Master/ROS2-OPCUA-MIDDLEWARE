@@ -30,11 +30,8 @@ public class TcpSocket implements ISocket {
 		isConnected = false;
 		COMport = port;
 		this.remote_ip = remote_ip;
-		// Fant feilen her - den gir nodename etter den kjører connect.
-		// flytt this.nodename = node_name; over TCPConn = connect(), så printer den navnet på noden.
-		// Hilsen Morten
-		TCPConn = connect();
 		this.nodename = node_name;
+		TCPConn = connect();
 	}
 	
 	public Socket connect() {
@@ -77,20 +74,20 @@ public class TcpSocket implements ISocket {
 			while(!this.inputStream.ready()){}
 			line=this.inputStream.readLine();
 			return line;
-		
-			} catch(Exception e) {
-				System.out.println(this.nodename+ " could not receive message from TCP connection on port: "+ this.COMport + " Error: " +e);
-				return "error";
-			}
+		} catch(Exception e) {
+			System.out.println(this.nodename+ " could not receive message from TCP connection on port: "+ this.COMport + " Error: " +e);
+			return "error";
+		}
 	}	
      
 	public void close() {
 		try {
 			TCPConn.close();
 			System.out.println("TCP connection to ROS closed port: " + this.COMport);
+			send_message("shutdown")
 			isConnected=false;
 		} catch (Exception e) {
-			System.out.println("ERROR closing the TCP communication of  "+ this.nodename+ "  on port: " + this.COMport + " error: " + e);
+			System.out.println("ERROR closing the TCP communication of  " + this.nodename+ "  on port: " + this.COMport + " error: " + e);
 		}
 	}
 	
