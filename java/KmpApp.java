@@ -90,7 +90,6 @@ public class KmpApp extends RoboticsAPIApplication {
 		lbr = getContext().getDeviceFromType(LBR.class);	
 		
 		// Create nodes for communication
-		// kmp_commander = new KMP_commander(kmp);
 		kmp_commander = new KmpCommander(remote_ip, kmp_commander_port, kmp, connection);
 		lbr_commander = new LbrCommander(remote_ip, lbr_commander_port, lbr, connection, getApplicationData().getFrame("/DrivePos"));
 
@@ -121,8 +120,6 @@ public class KmpApp extends RoboticsAPIApplication {
 		// Start all connected nodes
 		//kmp_commander.run();
 		//lbr_commander.run();
-
-		//setLBRmotion 2 0.5
 		
 		if(!(kmp_commander == null)){
 			if(kmp_commander.isSocketConnected()) {
