@@ -1,2 +1,1 @@
-# kmriiwa_test_ws
-Barebone repo for basic kmriiwa communication and controls
+# ROS2-OPCUA-MIDDLEWARE
