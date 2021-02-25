@@ -50,18 +50,17 @@ class KMPPubSub(Node):
             msg = String()
             msg.data = "shutdown"
             self.shutdown_publisher.publish(msg)
-            return
-
-        speed = float(e[0])
-        turn = 1.0
-        twist = Twist()
-        twist.linear.x = float(e[1])*speed
-        twist.linear.y = float(e[2])*speed
-        twist.linear.z = 0.0
-        twist.angular.x = 0.0
-        twist.angular.y = 0.0
-        twist.angular.z = float(e[3])*speed #or turn
-        self.publisher_.publish(twist)
+        else:
+            speed = float(e[0])
+            turn = 1.0
+            twist = Twist()
+            twist.linear.x = float(e[1])*speed
+            twist.linear.y = float(e[2])*speed
+            twist.linear.z = 0.0
+            twist.angular.x = 0.0
+            twist.angular.y = 0.0
+            twist.angular.z = float(e[3])*speed #or turn
+            self.publisher.publish(twist)
 
     def status_callback(self, msg):
         print("status update callback from kmp")
@@ -77,7 +76,6 @@ def main(args=None):
         For receiving commands from AAS
     """
     isConnected = False
-    #opcua_client = Client("opc.tcp://10.22.25.161:4840/freeopcua/server/")
     opcua_client = Client("opc.tcp://0.0.0.0:4841/freeopcua/server/")
 
     while not isConnected:

@@ -50,8 +50,8 @@ class KmpCommandNode(Node):
 
 
     def shutdown_callback(self, data):
-        self.soc.send(data.data)
-        self.soc.shutdown_()
+        self.soc.send("")
+        self.soc.close()
 
     def twist_callback(self, data):
         msg = 'setTwist ' + str(data.linear.x) + " " + str(data.linear.y) + " " + str(data.angular.z)
@@ -71,13 +71,9 @@ class KmpCommandNode(Node):
 
     def tear_down(self):
         try:
-            print("kom hit 1")
             self.destroy_node()
-            print("kom hit 2")
             rclpy.shutdown()
-            print("kom hit 3")
             print(cl_green("Successfully tore down kmp node"))
-            print("kom hit 4")
         except:
             print(cl_red('Error: ') + "rclpy shutdown failed")
 
