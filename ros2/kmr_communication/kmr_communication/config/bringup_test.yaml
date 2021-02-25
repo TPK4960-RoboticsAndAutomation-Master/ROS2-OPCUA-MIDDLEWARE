@@ -1,0 +1,14 @@
+
+lbr_command_node:
+  ros__parameters:
+
+    id: '1' # Robot ID
+    port: 50007 #30005
+    KMR/ip: '127.0.0.1' #'192.168.10.67'
+
+kmp_command_node:
+  ros__parameters:
+
+    id: '1' # Robot ID
+    port: 50008 #30005
+    KMR/ip: '127.0.0.1' #'192.168.10.67'

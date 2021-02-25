@@ -70,7 +70,7 @@ def main(args=None):
     """
     isConnected = False
     #opcua_client = Client("opc.tcp://10.22.25.161:4840/freeopcua/server/")
-    opcua_client = Client("opc.tcp://[2001:700:300:17b3:493d:a014:c98e:7172]:4841/freeopcua/server/")
+    opcua_client = Client("opc.tcp://andrcar-master.ivt.ntnu.no:4841/freeopcua/server/")
 
     while not isConnected:
         try:
