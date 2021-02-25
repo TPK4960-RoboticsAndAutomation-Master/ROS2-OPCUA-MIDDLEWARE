@@ -35,9 +35,6 @@ class Socket:
 
         threading.Thread(target=self.connect_to_socket).start()
 
-    def close(self):
-        self.isconnected = False
-
     def init_socket(self, socket_type, option, option_value):
         print(cl_cyan('Starting up node:'), self.node_name, 'IP:', self.ip, 'Port:', self.port)
         try:
@@ -46,6 +43,9 @@ class Socket:
             self.conn.bind(self.server_address)
         except:
            print(cl_red('Error: ') + "Connection for KUKA cannot assign requested address:", self.ip, self.port)
+
+    def close(self):
+        self.isconnected = False
 
     def shutdown(self):
         print("SHUTTING DOWN")
@@ -80,11 +80,13 @@ class TCPSocket(Socket):
                 data = self.receive_message()
             except:
                 t = 0
-
-        self.client_socket.shutdown(socket.SHUT_RDWR)
         self.client_socket.close()
         self.shutdown()
 
+    def close(self):
+        self.client_socket.shutdown(socket.SHUT_RDWR)
+        self.isconnected = False
+    
     def send(self, cmd):
         try:
             self.client_socket.sendall((cmd + '\r\n').encode("utf-8"))
@@ -122,7 +124,6 @@ class UDPSocket(Socket):
                 t = 0
 
         self.shutdown()
-
 
     def send(self, cmd):
         try:

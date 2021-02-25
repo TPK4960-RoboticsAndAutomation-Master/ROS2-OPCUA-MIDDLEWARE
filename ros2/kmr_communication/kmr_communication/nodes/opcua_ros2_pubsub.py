@@ -12,8 +12,8 @@ from opcua import ua, Client
 class LBRPubSub(Node):
     def __init__(self, ua_obj):
         super().__init__('lbr_hybrid_node')
-        self.publisher_ = self.create_publisher(String, 'manipulator_vel', 10)
-        self.shutdown_publisher_ = self.create_publisher(String, 'shutdown', 10)
+        self.publisher = self.create_publisher(String, 'manipulator_vel', 10)
+        self.shutdown_publisher = self.create_publisher(String, 'lbr_shutdown', 10)
         self.status_subscriber = self.create_subscription(String, 'lbr_status', self.status_callback, 10)
         self.server_obj = ua_obj
 
@@ -22,9 +22,9 @@ class LBRPubSub(Node):
         msg = String()
         msg.data = event.Message.Text
         if msg.data == "shutdown":
-            self.shutdown_publisher_.publish(msg)
+            self.shutdown_publisher.publish(msg)
         else:
-            self.publisher_.publish(msg)
+            self.publisher.publish(msg)
 
     def status_callback(self, msg):
         print("status update callback from lbr")
@@ -35,7 +35,8 @@ class LBRPubSub(Node):
 class KMPPubSub(Node):
     def __init__(self, ua_obj):
         super().__init__('kmp_hybrid_node')
-        self.publisher_ = self.create_publisher(Twist, 'cmd_vel', 10)
+        self.publisher = self.create_publisher(Twist, 'cmd_vel', 10)
+        self.shutdown_publisher = self.create_publisher(String, 'kmp_shutdown', 10)
         self.status_subscriber = self.create_subscription(String, 'kmp_status', self.status_callback, 10)
         self.server_obj = ua_obj
 
@@ -44,16 +45,22 @@ class KMPPubSub(Node):
             event.Message,text = "speed x y th", e.g. "0.5 0 1 0"
         """
         e = event.Message.Text.split(" ")
-        speed = float(e[0])
-        turn = 1.0
-        twist = Twist()
-        twist.linear.x = float(e[1])*speed
-        twist.linear.y = float(e[2])*speed
-        twist.linear.z = 0.0
-        twist.angular.x = 0.0
-        twist.angular.y = 0.0
-        twist.angular.z = float(e[3])*speed #or turn
-        self.publisher_.publish(twist)
+
+        if e[0] == "shutdown":
+            msg = String()
+            msg.data = "shutdown"
+            self.shutdown_publisher.publish(msg)
+        else:
+            speed = float(e[0])
+            turn = 1.0
+            twist = Twist()
+            twist.linear.x = float(e[1])*speed
+            twist.linear.y = float(e[2])*speed
+            twist.linear.z = 0.0
+            twist.angular.x = 0.0
+            twist.angular.y = 0.0
+            twist.angular.z = float(e[3])*speed #or turn
+            self.publisher.publish(twist)
 
     def status_callback(self, msg):
         print("status update callback from kmp")
@@ -69,8 +76,7 @@ def main(args=None):
         For receiving commands from AAS
     """
     isConnected = False
-    #opcua_client = Client("opc.tcp://10.22.25.161:4840/freeopcua/server/")
-    opcua_client = Client("opc.tcp://andrcar-master.ivt.ntnu.no:4841/freeopcua/server/")
+    opcua_client = Client("opc.tcp://0.0.0.0:4841/freeopcua/server/")
 
     while not isConnected:
         try:

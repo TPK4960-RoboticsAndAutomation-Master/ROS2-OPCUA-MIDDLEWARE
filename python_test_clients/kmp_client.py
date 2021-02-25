@@ -12,6 +12,7 @@ def receive():
     while True:
         data = soc.recv(1024)
         if len(data) == 0:
+            soc.sendall("shutdown".encode("UTF-8"))
             os._exit(1)
         print('Received', repr(data))
 

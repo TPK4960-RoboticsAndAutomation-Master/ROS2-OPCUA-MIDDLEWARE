@@ -37,7 +37,7 @@ class LbrCommandNode(Node):
         
         # Make a listener for relevant topics
         sub_manipulator_vel = self.create_subscription(String, 'manipulator_vel', self.manipulator_vel_callback, 10)
-        sub_shutdown = self.create_subscription(String, 'shutdown', self.shutdown_callback, 10)
+        sub_shutdown = self.create_subscription(String, 'lbr_shutdown', self.shutdown_callback, 10)
 
         # Publishers
         self.lbr_status_publisher = self.create_publisher(String, 'lbr_status', 10)
@@ -48,8 +48,7 @@ class LbrCommandNode(Node):
         self.get_logger().info('Node is ready')
 
     def shutdown_callback(self, data):
-        msg = "shutdown"
-        self.soc.send(msg)
+        self.soc.send("")
         self.soc.close()
 
     def manipulator_vel_callback(self, data):
