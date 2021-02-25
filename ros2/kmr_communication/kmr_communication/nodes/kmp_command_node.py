@@ -38,7 +38,7 @@ class KmpCommandNode(Node):
         # Make a listener for relevant topics
         sub_twist = self.create_subscription(Twist, 'cmd_vel', self.twist_callback, 10)
         sub_pose = self.create_subscription(Pose, 'pose', self.pose_callback, 10)
-        sub_shutdown = self.create_subscription(String, 'shutdown', self.shutdown_callback, 10)
+        sub_shutdown = self.create_subscription(String, 'kmp_shutdown', self.shutdown_callback, 10)
 
         # Publishers
         self.kmp_status_publisher = self.create_publisher(String, 'kmp_status', 10)
@@ -50,10 +50,8 @@ class KmpCommandNode(Node):
 
 
     def shutdown_callback(self, data):
-        print(data)
-        msg = "shutdown"
-        self.soc.send(msg)
-        self.soc.close()
+        self.soc.send(data.data)
+        self.soc.shutdown_()
 
     def twist_callback(self, data):
         msg = 'setTwist ' + str(data.linear.x) + " " + str(data.linear.y) + " " + str(data.angular.z)
@@ -73,9 +71,13 @@ class KmpCommandNode(Node):
 
     def tear_down(self):
         try:
+            print("kom hit 1")
             self.destroy_node()
+            print("kom hit 2")
             rclpy.shutdown()
+            print("kom hit 3")
             print(cl_green("Successfully tore down kmp node"))
+            print("kom hit 4")
         except:
             print(cl_red('Error: ') + "rclpy shutdown failed")
 

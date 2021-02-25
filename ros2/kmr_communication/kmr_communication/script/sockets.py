@@ -81,10 +81,15 @@ class TCPSocket(Socket):
             except:
                 t = 0
 
+        #self.client_socket.shutdown(socket.SHUT_RDWR)
+        #self.client_socket.close()
+        #self.shutdown()
+
+    def shutdown_(self):
         self.client_socket.shutdown(socket.SHUT_RDWR)
         self.client_socket.close()
         self.shutdown()
-
+    
     def send(self, cmd):
         try:
             self.client_socket.sendall((cmd + '\r\n').encode("utf-8"))
