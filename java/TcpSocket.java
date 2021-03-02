@@ -37,9 +37,7 @@ public class TcpSocket implements ISocket {
 	public Socket connect() {
 		while(true) {
 			try{
-				String remotePC = this.remote_ip; //"192.168.10.67";
-
-				TCPConn = new Socket(remotePC, COMport);
+				TCPConn = new Socket(this.remote_ip, COMport);
 				TCPConn.setReuseAddress(true);
 				System.out.println(this.nodename + " connecting to ROS over TCP on port: "+ COMport);
 				break;

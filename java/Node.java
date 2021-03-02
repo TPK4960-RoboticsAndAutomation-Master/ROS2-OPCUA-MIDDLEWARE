@@ -16,6 +16,7 @@ package kmr.test;
 
 import kmr.test.ISocket;
 import kmr.test.TcpSocket;
+import kmr.test.UdpSocket;
 
 public abstract class Node extends Thread{
 	
@@ -58,6 +59,9 @@ public abstract class Node extends Thread{
 	public void createSocket(){
 		if (this.ConnectionType == "TCP") {
 			this.socket = new TcpSocket(this.remote_ip, this.port, this.node_name);
+		}
+		else if (this.ConnectionType == "UDP") {
+			this.socket = new UdpSocket(this.remote_ip, this.port, this.node_name);
 		}
 	}
 	
