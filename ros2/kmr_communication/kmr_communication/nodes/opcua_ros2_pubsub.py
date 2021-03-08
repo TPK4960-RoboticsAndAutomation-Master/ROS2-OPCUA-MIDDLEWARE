@@ -76,7 +76,7 @@ def main(args=None):
         For receiving commands from AAS
     """
     isConnected = False
-    opcua_client = Client("opc.tcp://0.0.0.0:4841/freeopcua/server/")
+    opcua_client = Client("opc.tcp://andrcar-master.ivt.ntnu.no:4841/freeopcua/server/")
 
     while not isConnected:
         try:

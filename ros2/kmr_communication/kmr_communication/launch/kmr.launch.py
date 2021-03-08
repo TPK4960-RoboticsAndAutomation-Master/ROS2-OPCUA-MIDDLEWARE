@@ -16,7 +16,7 @@ def generate_launch_description(argv=sys.argv[1:]):
         default=os.path.join(
             get_package_share_directory(pkg_name),
             'config',
-            'bringup.yaml'))
+            'bringup_test.yaml'))
 
     return LaunchDescription([
         DeclareLaunchArgument(
