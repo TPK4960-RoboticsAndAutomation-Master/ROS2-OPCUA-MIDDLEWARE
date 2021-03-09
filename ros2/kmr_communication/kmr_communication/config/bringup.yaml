@@ -1,3 +1,8 @@
+connection_params:
+  ros__parameters:
+
+    connection_type: 'TCP' #UDP
+    robot: 'KMR'
 
 lbr_command_node:
   ros__parameters:
@@ -12,3 +17,8 @@ kmp_command_node:
     id: '1' # Robot ID
     port: 30002
     KMR/ip: '172.31.1.69'
+
+hybrid_node:
+  ros_parameters:
+
+    ip: 'andrcar-master.ivt.ntnu.no'

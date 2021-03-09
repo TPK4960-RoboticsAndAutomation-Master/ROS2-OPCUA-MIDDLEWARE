@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 
+import sys
 import rclpy
+import argparse
 from time import sleep
 from std_msgs.msg import String
 from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3, TransformStamped
 from rclpy.node import Node
 from rclpy.executors import MultiThreadedExecutor
+from rclpy.utilities import remove_ros_args
 from opcua import ua, Client
 
 
@@ -68,15 +71,20 @@ class KMPPubSub(Node):
         self.server_obj.call_method("2:" + method, str(msg.data))
 
 
-def main(args=None):
-    rclpy.init(args=args)
+def main(argv=sys.argv[1:]):
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('-d', '--domain')
+    args = parser.parse_args(remove_ros_args(args=argv))
+
+    rclpy.init(args=None)
     
     """ 
         OPC UA CLIENT 
         For receiving commands from AAS
     """
     isConnected = False
-    opcua_client = Client("opc.tcp://andrcar-master.ivt.ntnu.no:4841/freeopcua/server/")
+    #opcua_client = Client("opc.tcp://andrcar-master.ivt.ntnu.no:4841/freeopcua/server/")
+    opcua_client = Client("opc.tcp://" + args.domain + ":4841/freeopcua/server/")
 
     while not isConnected:
         try:
