@@ -16,7 +16,6 @@ setup(
         (os.path.join('share', package_name, 'config'), glob(package_name + '/config/*.yaml'))
     ],
     scripts=[
-        package_name + '/script/sockets.py'
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -27,8 +26,6 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'lbr = kmr_communication.nodes.lbr_command_node:main',
-            'kmp = kmr_communication.nodes.kmp_command_node:main',
             'opcua_ros2_hybrid = kmr_communication.nodes.opcua_ros2_pubsub:main',
         ],
     },
