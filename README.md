@@ -2,7 +2,8 @@
 
 ## Install dependencies
 1. ```sudo apt-get install jq```
-2. ```pip3 install yq```
-3. All other ros 2 stuff
+2. ```sudo apt-get moreutils```
+3. ```pip3 install yq```
+4. All other ros 2 stuff
 
 ## Launch

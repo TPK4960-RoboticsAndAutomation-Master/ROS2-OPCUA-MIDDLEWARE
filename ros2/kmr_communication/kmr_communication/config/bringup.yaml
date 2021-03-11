@@ -19,6 +19,6 @@ kmp_command_node:
     KMR/ip: '172.31.1.69'
 
 hybrid_node:
-  ros_parameters:
+  ros__parameters:
 
-    ip: 'andrcar-master.ivt.ntnu.no'
+    domain: 'andrcar-master.ivt.ntnu.no'
