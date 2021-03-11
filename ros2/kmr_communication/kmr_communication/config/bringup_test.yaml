@@ -1,4 +1,0 @@
-hybrid_node:
-  ros__parameters:
-  
-    domain: '0.0.0.0'

@@ -13,7 +13,7 @@ def generate_launch_description(argv=sys.argv[1:]):
     config_file_path = os.path.join(
             get_package_share_directory(pkg_name),
             'config',
-            'bringup_test.yaml')
+            'bringup.yaml')
     config_file = open(config_file_path)
     parsed_config_file = yaml.load(config_file, Loader=yaml.FullLoader)
     

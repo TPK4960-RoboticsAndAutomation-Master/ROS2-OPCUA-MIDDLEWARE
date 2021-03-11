@@ -1,4 +1,4 @@
 hybrid_node:
   ros__parameters:
 
-    domain: 'andrcar-master.ivt.ntnu.no'
+    domain: '0.0.0.0'
