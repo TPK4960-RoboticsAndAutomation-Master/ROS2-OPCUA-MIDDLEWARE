@@ -9,7 +9,7 @@ run_type=$2
 # Prod parameters as default 
 opc_ua_domain="andrcar-master.ivt.ntnu.no"
 
-if [ $build_type = 'source' ]
+if [ $build_type = 'source_' ]
 then
     source ~/ros2_foxy/install/setup.bash
 elif [ $build_type = 'binary' ]
