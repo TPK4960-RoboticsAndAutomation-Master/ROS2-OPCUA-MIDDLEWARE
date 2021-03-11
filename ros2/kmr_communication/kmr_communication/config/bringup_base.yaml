@@ -1,0 +1,22 @@
+connection_params:
+  ros__parameters:
+
+    connection_type: 'connection_type'
+    robot: 'robot'
+
+lbr_command_node:
+  ros__parameters:
+    id: 'lbr_id' # Robot ID
+    port: 'lbr_port'
+    KMR/ip: 'lbr_ip'
+
+kmp_command_node:
+  ros__parameters:
+    id: 'kmp_id' # Robot ID
+    port: 'kmp_port'
+    KMR/ip: 'kmp_ip'
+
+hybrid_node:
+  
+  ros__parameters:
+    domain: 'domain'
