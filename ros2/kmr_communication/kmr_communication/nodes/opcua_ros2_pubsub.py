@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
+from io import BytesIO
 import sys
+from typing import List
+
+from numpy.core.records import array
 import rclpy
 import argparse
 from time import sleep
@@ -10,6 +14,10 @@ from rclpy.node import Node
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.utilities import remove_ros_args
 from opcua import ua, Client
+from sensor_msgs.msg import Image
+from cv_bridge import CvBridge
+from cv2 import cv2 as cv
+import numpy as np
 
 class PubSub(Node):
     def __init__(self, component, ua_obj):
@@ -70,6 +78,21 @@ class KMPPubSub(PubSub):
             twist.angular.z = float(e[3])*speed #or turn
             self.publisher.publish(twist)
 
+class CameraPubSub(Node):
+    def __init__(self, ua_obj):
+        super().__init__('camera')
+        self.server_obj = ua_obj
+        self.image_subscriber = self.create_subscription(Image, 'image', self.publish_image, 10)
+        self.bridge = CvBridge()
+        self.i = 0
+
+    def publish_image(self, frame):
+        method = "update_frame"
+        frame = self.bridge.imgmsg_to_cv2(frame, 'bgr8')
+        np_bytes = BytesIO()
+        np.save(np_bytes, frame, allow_pickle=True)
+        self.server_obj.call_method("2:" + method, np_bytes.getvalue())
+
 
 def main(argv=sys.argv[1:]):
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -100,12 +123,16 @@ def main(argv=sys.argv[1:]):
 
     lbr_publisher = LBRPubSub(obj)
     kmp_publisher = KMPPubSub(obj)
+    camera_publisher = CameraPubSub(obj)
 
     lbr_sub = opcua_client.create_subscription(100, lbr_publisher)
     lbr_handle = lbr_sub.subscribe_events(obj, lbr_event)
 
     kmp_sub = opcua_client.create_subscription(100, kmp_publisher)
     kmp_handle = kmp_sub.subscribe_events(obj, kmp_event)
+
+    camera_sub = opcua_client.create_subscription(100, camera_publisher)
+
     """ OPC UA CLIENT END """
 
 
@@ -113,17 +140,21 @@ def main(argv=sys.argv[1:]):
         executor = MultiThreadedExecutor(num_threads=4)
         executor.add_node(lbr_publisher)
         executor.add_node(kmp_publisher)
+        executor.add_node(camera_publisher)
         executor.spin()
     finally:
         executor.shutdown()
         lbr_publisher.destroy_node()
         kmp_publisher.destroy_node()
+        camera_publisher.destroy_node()
         
         lbr_sub.unsubscribe(lbr_handle)
         lbr_sub.delete()
 
         kmp_sub.unsubscribe(kmp_handle)
         kmp_sub.delete()
+
+        camera_sub.delete()
 
     rclpy.shutdown()
 
