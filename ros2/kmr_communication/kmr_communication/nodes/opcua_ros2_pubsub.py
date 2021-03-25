@@ -84,7 +84,6 @@ class CameraPubSub(Node):
         self.server_obj = ua_obj
         self.image_subscriber = self.create_subscription(Image, 'image', self.publish_image, 10)
         self.bridge = CvBridge()
-        self.i = 0
 
     def publish_image(self, frame):
         method = "update_frame"
