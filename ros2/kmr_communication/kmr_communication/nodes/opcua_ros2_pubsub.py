@@ -9,7 +9,7 @@ import rclpy
 import argparse
 from time import sleep
 from std_msgs.msg import String
-from geometry_msgs.msg import Point, Pose, Quaternion, Twist, Vector3, TransformStamped
+from geometry_msgs.msg import Twist
 from rclpy.node import Node
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.utilities import remove_ros_args
@@ -25,9 +25,6 @@ class PubSub(Node):
         self.component = component
         self.server_obj = ua_obj
 
-        p_topic = 'manipulator_vel' if self.component == 'lbr' else 'cmd_vel'
-
-        self.publisher = self.create_publisher(String, p_topic, 10)
         self.shutdown_publisher = self.create_publisher(String, self.component + '_shutdown', 10)
         self.status_subscriber = self.create_subscription(String, self.component + '_status', self.status_callback, 10)
 
@@ -42,6 +39,7 @@ class PubSub(Node):
 class LBRPubSub(PubSub):
     def __init__(self, ua_obj):
         super().__init__('lbr', ua_obj)
+        self.publisher = self.create_publisher(String, "manipulator_vel", 10)
 
     def event_notification(self, event):
         msg = String()
@@ -55,6 +53,7 @@ class LBRPubSub(PubSub):
 class KMPPubSub(PubSub):
     def __init__(self, ua_obj):
         super().__init__('kmp', ua_obj)
+        self.publisher = self.create_publisher(Twist, "cmd_vel", 10)
 
     def event_notification(self, event):
         """
@@ -68,13 +67,12 @@ class KMPPubSub(PubSub):
             self.shutdown_publisher.publish(msg)
         else:
             speed = float(e[0])
-            turn = 1.0
             twist = Twist()
             twist.linear.x = float(e[1])*speed
             twist.linear.y = float(e[2])*speed
-            twist.linear.z = 0.0
-            twist.angular.x = 0.0
-            twist.angular.y = 0.0
+            twist.linear.z = float(0.0)
+            twist.angular.x = float(0.0)
+            twist.angular.y = float(0.0)
             twist.angular.z = float(e[3])*speed #or turn
             self.publisher.publish(twist)
 
