@@ -85,7 +85,7 @@ class CameraPubSub(Node):
 
     def publish_image(self, frame):
         method = "update_frame"
-        frame = self.bridge.imgmsg_to_cv2(frame, 'bgr8')
+        frame = self.bridge.imgmsg_to_cv2(frame)
         np_bytes = BytesIO()
         np.save(np_bytes, frame, allow_pickle=True)
         self.server_obj.call_method("2:" + method, np_bytes.getvalue())
