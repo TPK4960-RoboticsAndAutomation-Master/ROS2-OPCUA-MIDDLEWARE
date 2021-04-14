@@ -118,7 +118,7 @@ def main(argv=sys.argv[1:]):
     kmp_handle = kmp_sub.subscribe_events(obj, kmp_event)
 
     camera_sub = opcua_client.create_subscription(100, camera_publisher)
-    camera_handle = kmp_sub.subscribe_events(obj, camera_event)
+    camera_handle = camera_sub.subscribe_events(obj, camera_event)
     """ OPC UA CLIENT END """
 
 
