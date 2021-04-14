@@ -17,9 +17,6 @@ class PubSub(Node):
         self.component = component
         self.server_obj = ua_obj
 
-        p_topic = 'manipulator_vel' if self.component == 'lbr' else 'cmd_vel'
-
-        self.publisher = self.create_publisher(String, p_topic, 10)
         self.shutdown_publisher = self.create_publisher(String, self.component + '_shutdown', 10)
         self.status_subscriber = self.create_subscription(String, self.component + '_status', self.status_callback, 10)
 
@@ -34,6 +31,7 @@ class PubSub(Node):
 class LBRPubSub(PubSub):
     def __init__(self, ua_obj):
         super().__init__('lbr', ua_obj)
+        self.publisher = self.create_publisher(String, "manipulator_vel", 10)
 
     def event_notification(self, event):
         msg = String()
@@ -47,6 +45,7 @@ class LBRPubSub(PubSub):
 class KMPPubSub(PubSub):
     def __init__(self, ua_obj):
         super().__init__('kmp', ua_obj)
+        self.publisher = self.create_publisher(Twist, "cmd_vel", 10)
 
     def event_notification(self, event):
         """
@@ -60,15 +59,24 @@ class KMPPubSub(PubSub):
             self.shutdown_publisher.publish(msg)
         else:
             speed = float(e[0])
-            turn = 1.0
             twist = Twist()
             twist.linear.x = float(e[1])*speed
             twist.linear.y = float(e[2])*speed
-            twist.linear.z = 0.0
-            twist.angular.x = 0.0
-            twist.angular.y = 0.0
+            twist.linear.z = float(0.0)
+            twist.angular.x = float(0.0)
+            twist.angular.y = float(0.0)
             twist.angular.z = float(e[3])*speed #or turn
             self.publisher.publish(twist)
+
+class CameraPubSub(PubSub):
+    def __init__(self, ua_obj):
+        super().__init__('camera', ua_obj)
+        self.camera_publisher = self.create_publisher(String, 'start_camera', 10)
+
+    def event_notification(self, event):
+        msg = String()
+        msg.data = event.Message.Text
+        self.camera_publisher.publish(msg)
 
 
 def main(argv=sys.argv[1:]):
@@ -97,15 +105,20 @@ def main(argv=sys.argv[1:]):
 
     lbr_event = root.get_child(["0:Types", "0:EventTypes", "0:BaseEventType", "2:LBREvent"])
     kmp_event = root.get_child(["0:Types", "0:EventTypes", "0:BaseEventType", "2:KMPEvent"])
+    camera_event = root.get_child(["0:Types", "0:EventTypes", "0:BaseEventType", "2:CameraEvent"])
 
     lbr_publisher = LBRPubSub(obj)
     kmp_publisher = KMPPubSub(obj)
+    camera_publisher = CameraPubSub(obj)
 
     lbr_sub = opcua_client.create_subscription(100, lbr_publisher)
     lbr_handle = lbr_sub.subscribe_events(obj, lbr_event)
 
     kmp_sub = opcua_client.create_subscription(100, kmp_publisher)
     kmp_handle = kmp_sub.subscribe_events(obj, kmp_event)
+
+    camera_sub = opcua_client.create_subscription(100, camera_publisher)
+    camera_handle = kmp_sub.subscribe_events(obj, camera_event)
     """ OPC UA CLIENT END """
 
 
@@ -113,17 +126,20 @@ def main(argv=sys.argv[1:]):
         executor = MultiThreadedExecutor(num_threads=4)
         executor.add_node(lbr_publisher)
         executor.add_node(kmp_publisher)
+        executor.add_node(camera_publisher)
         executor.spin()
     finally:
         executor.shutdown()
         lbr_publisher.destroy_node()
         kmp_publisher.destroy_node()
+        camera_publisher.destroy_node()
         
         lbr_sub.unsubscribe(lbr_handle)
         lbr_sub.delete()
-
         kmp_sub.unsubscribe(kmp_handle)
         kmp_sub.delete()
+        camera_sub.unsubscribe(camera_handle)
+        camera_sub.delete()
 
     rclpy.shutdown()
 
