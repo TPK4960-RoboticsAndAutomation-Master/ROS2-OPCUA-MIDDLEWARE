@@ -18,7 +18,12 @@ class PubSub(Node):
         self.server_obj = ua_obj
 
         self.shutdown_publisher = self.create_publisher(String, self.component + '_shutdown', 10)
+        self.status_checker_publisher = self.create_publisher(String, "status_check", 10)
         self.status_subscriber = self.create_subscription(String, self.component + '_status', self.status_callback, 10)
+        
+        msg = String()
+        msg.data = "status_please"
+        self.status_checker_publisher.publish(msg)
 
     def event_notification(self, event):
         pass
@@ -62,9 +67,9 @@ class KMPPubSub(PubSub):
             twist = Twist()
             twist.linear.x = float(e[1])*speed
             twist.linear.y = float(e[2])*speed
-            twist.linear.z = float(0.0)
-            twist.angular.x = float(0.0)
-            twist.angular.y = float(0.0)
+            twist.linear.z = 0.0
+            twist.angular.x = 0.0
+            twist.angular.y = 0.0
             twist.angular.z = float(e[3])*speed #or turn
             self.publisher.publish(twist)
 
