@@ -76,12 +76,14 @@ class KMPPubSub(PubSub):
 class CameraPubSub(PubSub):
     def __init__(self, ua_obj):
         super().__init__('camera', ua_obj)
-        self.camera_publisher = self.create_publisher(String, 'handle_camera', 10)
 
-    def event_notification(self, event):
+    def event_notification(self, event):        
+        action, rid, *kwargs = event.Message.Text.split(",")
+        camera_publisher = self.create_publisher(String, 'handle_camera_' + str(rid), 10)
+
         msg = String()
-        msg.data = event.Message.Text
-        self.camera_publisher.publish(msg)
+        msg.data = action
+        camera_publisher.publish(msg)
 
 
 def main(argv=sys.argv[1:]):
