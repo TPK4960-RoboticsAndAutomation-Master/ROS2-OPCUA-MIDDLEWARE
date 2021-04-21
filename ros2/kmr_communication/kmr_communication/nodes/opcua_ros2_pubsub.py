@@ -17,10 +17,9 @@ class PubSub(Node):
         self.component = component
         self.server_obj = ua_obj
 
-        self.shutdown_publisher = self.create_publisher(String, self.component + '_shutdown', 10)
-        self.status_checker_publisher = self.create_publisher(String, "status_check", 10)
         self.status_subscriber = self.create_subscription(String, self.component + '_status', self.status_callback, 10)
         
+        self.status_checker_publisher = self.create_publisher(String, "status_check", 10)
         msg = String()
         msg.data = "status_please"
         self.status_checker_publisher.publish(msg)
@@ -29,39 +28,47 @@ class PubSub(Node):
         pass
 
     def status_callback(self, msg):
-        print("status update callback from " + self.component)
+        rid = msg.data.split(":")[0]
+        print("status update callback from " + self.component + " with RID: " + rid)
         method = "update_status"
         self.server_obj.call_method("2:" + method, str(msg.data))
 
 class LBRPubSub(PubSub):
     def __init__(self, ua_obj):
         super().__init__('lbr', ua_obj)
-        self.publisher = self.create_publisher(String, "manipulator_vel", 10)
 
     def event_notification(self, event):
         msg = String()
-        msg.data = event.Message.Text
+        msg.data, rid = event.Message.Text.split(",")
+        
+        publisher = self.create_publisher(String, "manipulator_vel_" + str(rid), 10)
+        shutdown_publisher = self.create_publisher(String, self.component + '_shutdown_' + str(rid), 10)
+        
         if msg.data == "shutdown":
-            self.shutdown_publisher.publish(msg)
+            shutdown_publisher.publish(msg)
         else:
-            self.publisher.publish(msg)
+            publisher.publish(msg)
         
 
 class KMPPubSub(PubSub):
     def __init__(self, ua_obj):
         super().__init__('kmp', ua_obj)
-        self.publisher = self.create_publisher(Twist, "cmd_vel", 10)
 
     def event_notification(self, event):
         """
-            event.Message,text = "speed x y th", e.g. "0.5 0 1 0"
+            event.Message.text = "speed x y th", e.g. "0.5 0 1 0"
         """
-        e = event.Message.Text.split(" ")
+        
+        action, rid = event.Message.Text.split(",")
+        publisher = self.create_publisher(Twist, "cmd_vel_" + str(rid), 10)
+        shutdown_publisher = self.create_publisher(String, self.component + '_shutdown_' + str(rid), 10)
+
+        e = action.split(" ")
 
         if e[0] == "shutdown":
             msg = String()
             msg.data = "shutdown"
-            self.shutdown_publisher.publish(msg)
+            shutdown_publisher.publish(msg)
         else:
             speed = float(e[0])
             twist = Twist()
@@ -71,7 +78,7 @@ class KMPPubSub(PubSub):
             twist.angular.x = 0.0
             twist.angular.y = 0.0
             twist.angular.z = float(e[3])*speed #or turn
-            self.publisher.publish(twist)
+            publisher.publish(twist)
 
 class CameraPubSub(PubSub):
     def __init__(self, ua_obj):
