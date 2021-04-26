@@ -112,7 +112,9 @@ def main(argv=sys.argv[1:]):
         try:
             opcua_client.connect()
             isConnected = True
+            print("Successfully connected with OPC UA server on: " + args.domain + ":4841")
         except:
+            print("Failed to connect on " + args.domain + " ... retrying")
             sleep(1)
     root = opcua_client.get_root_node()
     obj = root.get_child(["0:Objects", "2:MyObject"])
